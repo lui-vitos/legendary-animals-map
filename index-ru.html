@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Карта легендарных животных</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css?v=32">
+</head>
+<body>
+  <aside class="sidebar">
+    <header class="sidebar-header">
+      <h1>Легендарные животные</h1>
+      <p class="subtitle">Время как на <a href="https://jeanropke.github.io/RDOMap/" target="_blank" rel="noopener">RDO Map</a> · <a href="index.html">EN</a></p>
+    </header>
+
+    <section class="panel">
+      <h2>Условия</h2>
+      <div class="clock-box">
+        <span class="clock-label">Время</span>
+        <strong id="game-clock">--:--</strong>
+      </div>
+      <label>
+        Погода
+        <select id="game-weather">
+          <option value="clear">Ясно</option>
+          <option value="foggy">Туман</option>
+          <option value="storm">Буря</option>
+          <option value="rain">Дождь</option>
+        </select>
+      </label>
+      <label class="checkbox">
+        <input id="only-available" type="checkbox">
+        Только доступные
+      </label>
+      <label class="checkbox">
+        <input id="hide-cooldown" type="checkbox">
+        Скрыть на кулдауне
+      </label>
+      <label class="checkbox">
+        <input id="hide-completed" type="checkbox">
+        Скрыть выполненные на карте
+      </label>
+      <label class="checkbox">
+        <input id="show-fast-travel" type="checkbox" checked>
+        Быстрое перемещение
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>Категории</h2>
+      <div id="category-filters" class="checkbox-grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Фильтр прогресса</h2>
+      <div id="progress-filters" class="checkbox-grid"></div>
+    </section>
+
+    <section class="panel stats">
+      <div id="stats-text">Загрузка...</div>
+      <button id="reset-progress" type="button">Сбросить прогресс</button>
+    </section>
+
+    <section class="panel legend">
+      <h2>Цвета</h2>
+      <div class="legend-item"><span class="dot available"></span> Доступно</div>
+      <div class="legend-item"><span class="dot waiting"></span> Не подходит</div>
+      <div class="legend-item"><span class="dot cooldown"></span> Кулдаун (красный)</div>
+      <div class="legend-item"><span class="dot done"></span> Выполнено</div>
+      <div class="legend-item">
+        <span class="legend-icon-slot">
+          <img
+            class="legend-fast-travel-icon"
+            src="https://jeanropke.github.io/RDOMap/assets/images/icons/fasttravel.png"
+            alt=""
+            width="16"
+            height="16"
+          >
+        </span>
+        Быстрое перемещение
+      </div>
+    </section>
+  </aside>
+
+  <aside class="table-panel">
+    <div class="table-panel-header">
+      <h2>Таблица</h2>
+      <p class="sync-hint">Клик "+" ставит или снимает отметку. Изменение начала кулдауна сразу пересчитывает окончание (+72ч) для всего вида.</p>
+    </div>
+    <div class="table-scroll">
+      <table id="animals-table" class="animals-table">
+        <thead>
+          <tr>
+            <th>Животное</th>
+            <th><span class="th-multiline">Время</span></th>
+            <th><span class="th-multiline">Погода</span></th>
+            <th class="col-progress"><span class="th-multiline">Отслежено</span></th>
+            <th class="col-progress"><span class="th-multiline">Убито</span></th>
+            <th class="col-progress"><span class="th-multiline">Освежевано</span></th>
+            <th class="col-progress"><span class="th-multiline">Изучено</span></th>
+            <th class="col-progress"><span class="th-multiline">Усыплено</span></th>
+            <th class="col-progress"><span class="th-multiline">Образцы</span></th>
+            <th class="col-progress"><span class="th-multiline">Фото</span></th>
+            <th class="col-progress"><span class="th-multiline">Одежда</span></th>
+            <th class="col-cooldown"><span class="th-multiline">Начало<br>кулдауна</span></th>
+            <th class="col-cooldown"><span class="th-multiline">Конец<br>кулдауна</span></th>
+            <th class="col-cooldown-actions"><span class="th-multiline">Кулдаун</span></th>
+          </tr>
+        </thead>
+        <tbody id="animals-table-body"></tbody>
+      </table>
+    </div>
+  </aside>
+
+  <main class="map-wrap">
+    <div id="map"></div>
+    <div id="status" class="status-bar">Загрузка карты...</div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>window.APP_LANG = "ru";</script>
+  <script src="bundled-data.js?v=1"></script>
+  <script src="app.js?v=32"></script>
+</body>
+</html>

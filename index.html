@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Legendary Animals Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css?v=32">
+</head>
+<body>
+  <aside class="sidebar">
+    <header class="sidebar-header">
+      <h1>Legendary Animals</h1>
+      <p class="subtitle">Game time synced with <a href="https://jeanropke.github.io/RDOMap/" target="_blank" rel="noopener">RDO Map</a> В· <a href="index-ru.html">RU</a></p>
+    </header>
+
+    <section class="panel">
+      <h2>Conditions</h2>
+      <div class="clock-box">
+        <span class="clock-label">Time</span>
+        <strong id="game-clock">--:--</strong>
+      </div>
+      <label>
+        Weather
+        <select id="game-weather">
+          <option value="clear">Clear</option>
+          <option value="foggy">Foggy</option>
+          <option value="storm">Storm</option>
+          <option value="rain">Rain</option>
+        </select>
+      </label>
+      <label class="checkbox">
+        <input id="only-available" type="checkbox">
+        Only available
+      </label>
+      <label class="checkbox">
+        <input id="hide-cooldown" type="checkbox">
+        Hide on cooldown
+      </label>
+      <label class="checkbox">
+        <input id="hide-completed" type="checkbox">
+        Hide completed on map
+      </label>
+      <label class="checkbox">
+        <input id="show-fast-travel" type="checkbox" checked>
+        Fast travel
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>Categories</h2>
+      <div id="category-filters" class="checkbox-grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Progress filter</h2>
+      <div id="progress-filters" class="checkbox-grid"></div>
+    </section>
+
+    <section class="panel stats">
+      <div id="stats-text">Loading...</div>
+      <button id="reset-progress" type="button">Reset progress</button>
+    </section>
+
+    <section class="panel legend">
+      <h2>Legend</h2>
+      <div class="legend-item"><span class="dot available"></span> Available now</div>
+      <div class="legend-item"><span class="dot waiting"></span> Not suitable now</div>
+      <div class="legend-item"><span class="dot cooldown"></span> Cooldown (red)</div>
+      <div class="legend-item"><span class="dot done"></span> Completed</div>
+      <div class="legend-item">
+        <span class="legend-icon-slot">
+          <img
+            class="legend-fast-travel-icon"
+            src="https://jeanropke.github.io/RDOMap/assets/images/icons/fasttravel.png"
+            alt=""
+            width="16"
+            height="16"
+          >
+        </span>
+        Fast travel
+      </div>
+    </section>
+  </aside>
+
+  <aside class="table-panel">
+    <div class="table-panel-header">
+      <h2>Table</h2>
+      <p class="sync-hint">Click "+" to toggle progress. Changing cooldown start recalculates cooldown end (+72h) for the whole species.</p>
+    </div>
+    <div class="table-scroll">
+      <table id="animals-table" class="animals-table">
+        <thead>
+          <tr>
+            <th>Animal</th>
+            <th><span class="th-multiline">Time</span></th>
+            <th><span class="th-multiline">Weather</span></th>
+            <th class="col-progress"><span class="th-multiline">Tracked</span></th>
+            <th class="col-progress"><span class="th-multiline">Killed</span></th>
+            <th class="col-progress"><span class="th-multiline">Skinned</span></th>
+            <th class="col-progress"><span class="th-multiline">Studied</span></th>
+            <th class="col-progress"><span class="th-multiline">Sedated</span></th>
+            <th class="col-progress"><span class="th-multiline">Samples</span></th>
+            <th class="col-progress"><span class="th-multiline">Photo</span></th>
+            <th class="col-progress"><span class="th-multiline">Garment</span></th>
+            <th class="col-cooldown"><span class="th-multiline">Cooldown<br>start</span></th>
+            <th class="col-cooldown"><span class="th-multiline">Cooldown<br>end</span></th>
+            <th class="col-cooldown-actions"><span class="th-multiline">Cool-<br>down</span></th>
+          </tr>
+        </thead>
+        <tbody id="animals-table-body"></tbody>
+      </table>
+    </div>
+  </aside>
+
+  <main class="map-wrap">
+    <div id="map"></div>
+    <div id="status" class="status-bar">Loading map...</div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>window.APP_LANG = "en";</script>
+  <script src="bundled-data.js?v=1"></script>
+  <script src="app.js?v=32"></script>
+</body>
+</html>
