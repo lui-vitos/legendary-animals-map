@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Карта легендарных животных</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=32">
+  <link rel="stylesheet" href="styles.css?v=33">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
 </head>
@@ -86,7 +86,18 @@
     </section>
   </aside>
 
-  <aside class="table-panel">
+  <aside class="table-panel" id="table-panel">
+    <button
+      type="button"
+      id="toggle-table-panel"
+      class="table-panel-toggle"
+      aria-expanded="true"
+      aria-controls="table-panel"
+      title="Свернуть таблицу (карта на весь экран)"
+    >
+      <span class="toggle-icon" aria-hidden="true">‹</span>
+      <span class="toggle-label">Таблица</span>
+    </button>
     <div class="table-panel-header">
       <h2>Таблица</h2>
       <p class="sync-hint">Клик "+" ставит или снимает отметку. Изменение начала кулдауна сразу пересчитывает окончание (+72ч) для всего вида.</p>
@@ -124,6 +135,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>window.APP_LANG = "ru";</script>
   <script src="bundled-data.js?v=1"></script>
-  <script src="app.js?v=32"></script>
+  <script src="app.js?v=33"></script>
 </body>
 </html>

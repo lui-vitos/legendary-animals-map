@@ -51,6 +51,9 @@ const I18N = {
     confirmReset: "Reset all animal progress?",
     runServerHint: "Run: python serve_map.py",
     noData: "No data",
+    collapseTable: "Hide table (full-screen map)",
+    expandTable: "Show table",
+    toggleTableLabel: "Table",
   },
   ru: {
     dateLocale: "ru-RU",
@@ -103,6 +106,9 @@ const I18N = {
     confirmReset: "Сбросить весь прогресс по животным?",
     runServerHint: "Запустите: python serve_map.py",
     noData: "Нет данных",
+    collapseTable: "Свернуть таблицу (карта на весь экран)",
+    expandTable: "Показать таблицу",
+    toggleTableLabel: "Таблица",
   },
 };
 const L10N = I18N[APP_LANG];
@@ -139,7 +145,8 @@ const ZONE_SELECTED_WEIGHT = 4;
 const RDO_ICON_BASE =
   "https://jeanropke.github.io/RDOMap/assets/images/icons/game/animals/legendaries";
 const RDO_ASSETS_BASE = "https://jeanropke.github.io/RDOMap/assets/images/icons";
-const APP_VERSION = "31";
+const APP_VERSION = "33";
+const TABLE_COLLAPSED_KEY = "legendary-map-table-collapsed";
 const MAP_ZOOM_BASE = 3;
 const SPAWN_ICON_SIZE = 18;
 const SPAWN_POINT_COLOR = "#ff2d2d";
@@ -1218,11 +1225,9 @@ function ensureAnimalLayers() {
   }
 }
 
-function renderMarkers() {
+function syncMapLayersFromFilters(now = new Date()) {
   ensureAnimalLayers();
-
   const filters = getFilters();
-  const now = new Date();
 
   for (const animal of animals) {
     const entry = animalLayers.get(animal.id);
@@ -1242,7 +1247,10 @@ function renderMarkers() {
       }
     }
   }
+}
 
+function renderMarkers() {
+  syncMapLayersFromFilters();
   updateStats();
   updateAllTableRows();
 }
@@ -1314,20 +1322,42 @@ function syncPopupTimeRemaining() {
 
 function updateClock() {
   updateStats();
-  const filters = getFilters();
-  const now = new Date();
-
+  syncMapLayersFromFilters();
   for (const animal of animals) {
-    const entry = animalLayers.get(animal.id);
-    if (!entry || !layerGroup.hasLayer(entry.group)) continue;
-
-    const status = getAnimalStatus(animal, filters.hour, filters.weather, now);
-    setLayerStyle(entry, status);
     updateTableRowStatus(animal.id);
   }
-
   syncPopupTimeRemaining();
   syncMapSelectionHighlight();
+}
+
+function setTablePanelCollapsed(collapsed) {
+  document.body.classList.toggle("table-collapsed", collapsed);
+  const button = document.getElementById("toggle-table-panel");
+  if (button) {
+    button.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    button.title = collapsed ? L10N.expandTable : L10N.collapseTable;
+    const icon = button.querySelector(".toggle-icon");
+    if (icon) icon.textContent = collapsed ? "›" : "‹";
+  }
+  if (map) {
+    window.setTimeout(() => map.invalidateSize(), 180);
+  }
+}
+
+function initTablePanelToggle() {
+  const button = document.getElementById("toggle-table-panel");
+  if (!button) return;
+
+  const label = button.querySelector(".toggle-label");
+  if (label) label.textContent = L10N.toggleTableLabel;
+
+  setTablePanelCollapsed(localStorage.getItem(TABLE_COLLAPSED_KEY) === "1");
+
+  button.addEventListener("click", () => {
+    const collapsed = !document.body.classList.contains("table-collapsed");
+    localStorage.setItem(TABLE_COLLAPSED_KEY, collapsed ? "1" : "0");
+    setTablePanelCollapsed(collapsed);
+  });
 }
 
 function initFilters() {
@@ -1485,6 +1515,7 @@ document.getElementById("reset-progress").addEventListener("click", () => {
 });
 
 initMap();
+initTablePanelToggle();
 Promise.all([loadAnimals(), loadFastTravels()])
   .then(([payload, fastPayload]) => {
     animals = payload.animals || [];
