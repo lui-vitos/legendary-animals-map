@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Legendary Animals Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=34">
+  <link rel="stylesheet" href="styles.css?v=35">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
 </head>
@@ -87,17 +87,6 @@
   </aside>
 
   <aside class="table-panel" id="table-panel">
-    <button
-      type="button"
-      id="toggle-table-panel"
-      class="table-panel-toggle"
-      aria-expanded="true"
-      aria-controls="table-panel"
-      title="Hide table (full-screen map)"
-    >
-      <span class="toggle-icon" aria-hidden="true">‹</span>
-      <span class="toggle-label">Table</span>
-    </button>
     <div class="table-panel-header">
       <h2>Table</h2>
       <p class="sync-hint">Click "+" to toggle progress. Changing cooldown start recalculates cooldown end (+72h) for the whole species.</p>
@@ -132,9 +121,21 @@
     <div id="status" class="status-bar">Loading map...</div>
   </main>
 
+  <button
+    type="button"
+    id="toggle-table-panel"
+    class="table-panel-toggle"
+    aria-expanded="true"
+    aria-controls="table-panel"
+    title="Hide table (full-screen map)"
+  >
+    <span class="toggle-icon" aria-hidden="true">◀</span>
+    <span class="toggle-label">Table</span>
+  </button>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>window.APP_LANG = "en";</script>
   <script src="bundled-data.js?v=1"></script>
-  <script src="app.js?v=34"></script>
+  <script src="app.js?v=35"></script>
 </body>
 </html>

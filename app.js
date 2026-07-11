@@ -1330,6 +1330,17 @@ function updateClock() {
   syncMapSelectionHighlight();
 }
 
+function syncTableTogglePosition() {
+  const tablePanel = document.getElementById("table-panel");
+  const button = document.getElementById("toggle-table-panel");
+  if (!tablePanel || !button) return;
+
+  const edge = tablePanel.getBoundingClientRect().right;
+  button.style.left = `${edge}px`;
+  button.style.top = "50%";
+  button.style.transform = "translate(-50%, -50%)";
+}
+
 function setTablePanelCollapsed(collapsed) {
   document.body.classList.toggle("table-collapsed", collapsed);
   const button = document.getElementById("toggle-table-panel");
@@ -1337,10 +1348,14 @@ function setTablePanelCollapsed(collapsed) {
     button.setAttribute("aria-expanded", collapsed ? "false" : "true");
     button.title = collapsed ? L10N.expandTable : L10N.collapseTable;
     const icon = button.querySelector(".toggle-icon");
-    if (icon) icon.textContent = collapsed ? "›" : "‹";
+    if (icon) icon.textContent = collapsed ? "▶" : "◀";
   }
+  syncTableTogglePosition();
   if (map) {
-    window.setTimeout(() => map.invalidateSize(), 180);
+    window.setTimeout(() => {
+      map.invalidateSize();
+      syncTableTogglePosition();
+    }, 220);
   }
 }
 
@@ -1358,6 +1373,9 @@ function initTablePanelToggle() {
     localStorage.setItem(TABLE_COLLAPSED_KEY, collapsed ? "1" : "0");
     setTablePanelCollapsed(collapsed);
   });
+
+  window.addEventListener("resize", syncTableTogglePosition);
+  window.addEventListener("load", syncTableTogglePosition);
 }
 
 function initFilters() {
@@ -1531,6 +1549,7 @@ Promise.all([loadAnimals(), loadFastTravels()])
     renderMarkers();
     updateMapMarkerIcons();
     startRdoClock();
+    syncTableTogglePosition();
   })
   .catch((error) => {
     document.getElementById("status").textContent =
