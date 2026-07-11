@@ -401,6 +401,11 @@ function formatAnimalTime(animal) {
   return animal.time_windows.map(formatTimeWindow).join(", ");
 }
 
+function formatAnimalTimeTable(animal) {
+  if (!animal.time_windows?.length) return animal.time_raw || "—";
+  return animal.time_windows.map(formatTimeWindow).join("<br>");
+}
+
 function getGameMinutesSinceMidnight(gameTime) {
   return gameTime.getUTCHours() * 60 + gameTime.getUTCMinutes();
 }
@@ -1036,6 +1041,8 @@ function buildAnimalRow(animal) {
   const progressCells = PROGRESS_FIELDS.map(
     (field) => `<td class="col-progress">${buildProgressCell(animal.id, field)}</td>`,
   ).join("");
+  const timeClass =
+    animal.time_windows?.length > 1 ? "col-time col-time-multi" : "col-time";
 
   const cooldownStatus = `<div class="cooldown-actions">
       <button type="button" class="cooldown-btn" data-action="cooldown" data-animal-id="${animal.id}">${L10N.cooldownOn}</button>
@@ -1049,7 +1056,7 @@ function buildAnimalRow(animal) {
       <td>
         <button type="button" class="animal-name-btn ${isCompleted(getProgress(animal.id)) ? "completed" : ""}" data-action="focus" data-animal-id="${animal.id}">${animal.name}</button>
       </td>
-      <td>${formatAnimalTime(animal)}</td>
+      <td class="${timeClass}">${formatAnimalTimeTable(animal)}</td>
       <td>${animal.weather}</td>
       ${progressCells}
       <td class="cell-cooldown">

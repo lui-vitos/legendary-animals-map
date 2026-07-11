@@ -350,26 +350,44 @@ body.table-collapsed .table-panel-toggle {
   max-width: 34px;
 }
 
-.th-progress {
-  max-width: 46px;
+.th-progress-vertical {
+  display: inline-block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
   font-size: 10px;
   font-weight: 700;
-  line-height: 1.22;
-  letter-spacing: 0.01em;
+  line-height: 1;
+  letter-spacing: 0.02em;
   color: #f0d090;
+  white-space: nowrap;
+  padding: 2px 0;
 }
 
 .animals-table th.col-progress,
 .animals-table td.col-progress {
-  width: 30px;
-  min-width: 30px;
-  max-width: 32px;
-  padding: 2px 1px;
+  width: 22px;
+  min-width: 22px;
+  max-width: 24px;
+  padding: 2px 0;
 }
 
 .animals-table th.col-progress {
-  padding: 6px 2px 5px;
-  vertical-align: middle;
+  min-height: 92px;
+  padding: 8px 0 6px;
+  vertical-align: bottom;
+}
+
+.animals-table th.col-time,
+.animals-table td.col-time {
+  min-width: 78px;
+  white-space: nowrap;
+  font-size: 9px;
+  padding: 2px 4px;
+}
+
+.animals-table td.col-time-multi {
+  white-space: normal;
+  line-height: 1.25;
 }
 
 .animals-table th.col-cooldown,
@@ -480,8 +498,8 @@ body.table-collapsed .table-panel-toggle {
 }
 
 .cell-progress {
-  width: 22px;
-  min-width: 22px;
+  width: 18px;
+  min-width: 18px;
   height: 16px;
   margin: 0 auto;
   padding: 0;
