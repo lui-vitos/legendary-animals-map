@@ -234,9 +234,10 @@ button:hover {
   min-width: 0;
   min-height: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   border-right: 1px solid var(--panel-border);
   background: #17120f;
+  z-index: 20;
 }
 
 body.table-collapsed .table-panel {
@@ -251,25 +252,25 @@ body.table-collapsed .table-scroll {
 
 .table-panel-toggle {
   position: absolute;
-  right: -13px;
+  right: -14px;
   top: 50%;
-  z-index: 600;
+  z-index: 650;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  width: 26px;
-  height: 64px;
+  width: 28px;
+  height: 72px;
   margin: 0;
   padding: 4px 0;
   transform: translateY(-50%);
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--accent);
   border-left: none;
-  border-radius: 0 8px 8px 0;
-  background: linear-gradient(180deg, #2f251d 0%, #241b15 100%);
-  color: var(--accent);
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.35);
+  border-radius: 0 10px 10px 0;
+  background: linear-gradient(180deg, #3a2d24 0%, #2a211b 100%);
+  color: #f0d090;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.45);
   cursor: pointer;
   pointer-events: auto;
 }
