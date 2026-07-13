@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Расписание событий — Карта легендарных животных</title>
+
+  <link rel="stylesheet" href="guide.css?v=1">
+
+  <link rel="stylesheet" href="fme.css?v=2">
+
+  <script src="site-config.js?v=1"></script>
+
+  <script src="metrika.js?v=1"></script>
+
+</head>
+
+<body>
+
+  <div class="fme-page-wrap" id="fme-schedule-page">
+
+    <header class="fme-page-header">
+
+      <h1>Расписание событий свободного режима</h1>
+
+      <p class="fme-page-nav">
+
+        <a href="index-ru.html">← Карта</a>
+
+        <a href="legendary-events-ru.html">Только легендарные</a>
+
+        <a href="builds-ru.html">Билды</a>
+
+        <a href="guide-ru.html">Гайд</a>
+
+        <a href="fme-schedule.html">English</a>
+
+      </p>
+
+    </header>
+
+
+
+    <div class="fme-tz-box">
+
+      <strong>Ваш часовой пояс:</strong> <span id="fme-timezone">…</span><br>
+
+      <span id="fme-day-label">Сегодня</span> — время начала каждого события показано автоматически в вашем локальном времени.
+
+      Исходное расписание хранится в UTC (колонка UTC для справки).
+
+    </div>
+
+
+
+    <table class="fme-schedule-table">
+
+      <thead>
+
+        <tr>
+
+          <th>Локальное время</th>
+
+          <th class="fme-col-utc">UTC</th>
+
+          <th>Событие</th>
+
+          <th>Тип</th>
+
+          <th>До начала</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="fme-schedule-body"></tbody>
+
+    </table>
+
+
+
+    <div class="fme-desc-block" id="fme-descriptions"></div>
+
+
+
+    <p class="fme-credits">
+      Расписание событий — по данным сообщества. Red Dead Redemption 2 © Rockstar Games.
+    </p>
+
+  </div>
+
+
+
+  <script>window.APP_LANG = "ru";</script>
+
+  <script src="fme-data.js?v=2"></script>
+
+  <script src="fme.js?v=4"></script>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Рекомендуемые билды — Карта легендарных животных</title>
+  <link rel="stylesheet" href="guide.css?v=2">
+  <link rel="stylesheet" href="fme.css?v=4">
+  <link rel="stylesheet" href="builds.css?v=12">
+  <script src="site-config.js?v=1"></script>
+  <script src="metrika.js?v=1"></script>
+</head>
+<body>
+  <div class="fme-page-wrap" id="builds-page">
+    <header class="fme-page-header">
+      <h1>Рекомендуемые билды карт умений</h1>
+      <p class="fme-page-nav">
+        <a href="index-ru.html">← Карта</a>
+        <a href="legendary-events-ru.html">События</a>
+        <a href="fme-schedule-ru.html">Расписание</a>
+        <a href="guide-ru.html">Гайд</a>
+        <a href="builds.html">English</a>
+      </p>
+    </header>
+
+    <p class="build-intro">
+      Сводка <strong>рекомендуемых связок карт умений</strong> для событий свободного режима и противоборств Red Dead Online.
+      Это советы сообщества, а не официальные гайды Rockstar. Мета может меняться после патчей.
+    </p>
+
+    <p class="build-disclaimer">
+      В RDO можно экипировать <strong>4 карты</strong>: 1 на «Меткий глаз» + 3 пассивные (слоты открываются на 10, 20 и 40 уровне).
+      Для эффективности прокачивайте карты до <strong>III уровня</strong>. Ниже — шаблоны по стилю боя;
+      у каждого события и режима несколько вариантов (клик по названию подсвечивает карты справа).
+    </p>
+
+    <div class="builds-layout">
+      <div class="builds-main">
+    <h2>Шаблоны билдов</h2>
+    <p class="build-section-lead">Нажмите на шаблон — справа подсветятся карты. У каждого события и режима — несколько вариантов под стиль игры.</p>
+    <div id="builds-templates" class="build-templates-grid"></div>
+
+    <h2>События свободного режима</h2>
+    <p class="build-section-lead"><a href="fme-schedule-ru.html">Полное расписание</a>.</p>
+    <div id="builds-fme" class="build-events-grid"></div>
+
+    <h2>Варианты «Случайного события»</h2>
+    <p class="build-section-lead">Когда в расписании указано «Случайное событие», может выпасть одно из PvP-испытаний:</p>
+    <div id="builds-random" class="build-events-grid"></div>
+
+    <h2>Противоборства</h2>
+    <p class="build-section-lead">
+      Серии и режимы как в меню статистики / быстрого входа: <strong>Захват</strong>, <strong>Перестрелка</strong>,
+      <strong>Выбывание</strong>, <strong>Гонка</strong>. Это не события свободного режима.
+    </p>
+    <div id="builds-showdown" class="build-showdown-wrap"></div>
+
+    <p class="fme-credits">
+      Карты умений: <a href="https://rockstarnews.ru/cards/ru/all/" target="_blank" rel="noopener">Rockstar News</a>,
+      <a href="https://reddead.fandom.com/wiki/Red_Dead_Online_Ability_Cards" target="_blank" rel="noopener">Red Dead Wiki</a>.
+      Red Dead Redemption 2 © Rockstar Games.
+    </p>
+      </div>
+
+      <aside class="builds-cards-panel" aria-label="Карты умений">
+        <h3>Карты умений</h3>
+        <p id="builds-cards-hint" class="builds-cards-hint"></p>
+        <div id="builds-cards-legend" class="builds-cards-legend" hidden></div>
+        <div id="builds-cards-gallery"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>window.APP_LANG = "ru";</script>
+  <script src="fme-data.js?v=2"></script>
+  <script src="ability-cards.js?v=7"></script>
+  <script src="ability-card-descriptions.js?v=3"></script>
+  <script src="builds-data.js?v=7"></script>
+  <script src="builds.js?v=15"></script>
+</body>
+</html>

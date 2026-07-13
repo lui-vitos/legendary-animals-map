@@ -1,0 +1,95 @@
+{
+  "exported_at": "2026-07-13 17:12:00",
+  "points": [
+    {
+      "id": "fasttravel.annesburg",
+      "name": "Annesburg",
+      "x": -43.4814,
+      "y": 156.745
+    },
+    {
+      "id": "fasttravel.armadillo",
+      "name": "Armadillo",
+      "x": -104.3897,
+      "y": 53.4547
+    },
+    {
+      "id": "fasttravel.blackwater",
+      "name": "Blackwater",
+      "x": -82.9581,
+      "y": 99.7447
+    },
+    {
+      "id": "fasttravel.colter",
+      "name": "Colter",
+      "x": -25.9919,
+      "y": 91.0348
+    },
+    {
+      "id": "fasttravel.emerald",
+      "name": "Emerald",
+      "x": -56.8038,
+      "y": 134.8028
+    },
+    {
+      "id": "fasttravel.lagras",
+      "name": "Lagras",
+      "x": -72.6373,
+      "y": 143.8494
+    },
+    {
+      "id": "fasttravel.macfarlanes",
+      "name": "Macfarlanes",
+      "x": -101.5375,
+      "y": 72.4558
+    },
+    {
+      "id": "fasttravel.manzanita",
+      "name": "Manzanita",
+      "x": -88.5856,
+      "y": 80.8118
+    },
+    {
+      "id": "fasttravel.rhodes",
+      "name": "Rhodes",
+      "x": -83.6534,
+      "y": 130.6434
+    },
+    {
+      "id": "fasttravel.saint_denis",
+      "name": "Saint Denis",
+      "x": -86.3787,
+      "y": 152.6896
+    },
+    {
+      "id": "fasttravel.strawberry",
+      "name": "Strawberry",
+      "x": -70.03,
+      "y": 84.3196
+    },
+    {
+      "id": "fasttravel.tumbleweed",
+      "name": "Tumbleweed",
+      "x": -109.3272,
+      "y": 26.8317
+    },
+    {
+      "id": "fasttravel.valentine",
+      "name": "Valentine",
+      "x": -53.602,
+      "y": 108.3971
+    },
+    {
+      "id": "fasttravel.van_horn",
+      "name": "Van Horn",
+      "x": -53.7409,
+      "y": 156.3243
+    },
+    {
+      "id": "fasttravel.wapiti",
+      "name": "Wapiti",
+      "x": -29.7933,
+      "y": 118.8076
+    }
+  ]
+}

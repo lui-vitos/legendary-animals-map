@@ -1,0 +1,258 @@
+{
+  "generated_from": "Legendaries_Ru.xlsm + Legendaries_En.xlsm",
+  "count": 42,
+  "names": [
+    {
+      "order": 1,
+      "ru": "Волк Ночной Оникс",
+      "en": "Wolf Onyx",
+      "category_code": "dark"
+    },
+    {
+      "order": 2,
+      "ru": "Бобр Лунный Свет",
+      "en": "Beaver Moon",
+      "category_code": "light"
+    },
+    {
+      "order": 3,
+      "ru": "Аллигатор Ржавый Зуб",
+      "en": "Alligator Sun",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 4,
+      "ru": "Лиса Ота",
+      "en": "Fox Ota",
+      "category_code": "patterned"
+    },
+    {
+      "order": 5,
+      "ru": "Пантера Ночной шаг",
+      "en": "Panther Nightwalker",
+      "category_code": "dark"
+    },
+    {
+      "order": 6,
+      "ru": "Пантера Дух Болот",
+      "en": "Panther Ghost",
+      "category_code": "light"
+    },
+    {
+      "order": 7,
+      "ru": "Койот Рыжая Спина",
+      "en": "Coyote Red Streak",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 8,
+      "ru": "Лиса Мраморный Хвост",
+      "en": "Fox Marble",
+      "category_code": "patterned"
+    },
+    {
+      "order": 9,
+      "ru": "Койот Черная Лапа",
+      "en": "Coyote Midnight Paw",
+      "category_code": "dark"
+    },
+    {
+      "order": 10,
+      "ru": "Олень Первый Снег",
+      "en": "Buck Snow",
+      "category_code": "light"
+    },
+    {
+      "order": 11,
+      "ru": "Бобр Зизи",
+      "en": "Beaver Zizi",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 12,
+      "ru": "Олень Грязная Спина",
+      "en": "Buck Mud Runner",
+      "category_code": "patterned"
+    },
+    {
+      "order": 13,
+      "ru": "Вапити Катата",
+      "en": "Elk Katata",
+      "category_code": "dark"
+    },
+    {
+      "order": 14,
+      "ru": "Толсторог Габбро",
+      "en": "Ram Gabbro Horn",
+      "category_code": "light"
+    },
+    {
+      "order": 15,
+      "ru": "Кабан Вакпа",
+      "en": "Boar Wakpa",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 16,
+      "ru": "Толсторог Белый Рог",
+      "en": "Ram Chalk Horn",
+      "category_code": "patterned"
+    },
+    {
+      "order": 17,
+      "ru": "Аллигатор Тека",
+      "en": "Alligator Teca",
+      "category_code": "dark"
+    },
+    {
+      "order": 18,
+      "ru": "Пума Игуга",
+      "en": "Cougar Iguga",
+      "category_code": "light"
+    },
+    {
+      "order": 19,
+      "ru": "Кабан Коги",
+      "en": "Boar Cogi",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 20,
+      "ru": "Пума Маса",
+      "en": "Cougar Maza",
+      "category_code": "patterned"
+    },
+    {
+      "order": 21,
+      "ru": "Бизон Татанка",
+      "en": "Bison Tatanka",
+      "category_code": "dark"
+    },
+    {
+      "order": 22,
+      "ru": "Лось Морозный След",
+      "en": "Moose Snowflake",
+      "category_code": "light"
+    },
+    {
+      "order": 23,
+      "ru": "Волк Изумрудный Глаз",
+      "en": "Wolf Emerald",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 24,
+      "ru": "Медведь Овиза",
+      "en": "Bear Owiza",
+      "category_code": "patterned"
+    },
+    {
+      "order": 25,
+      "ru": "Лось Темный Рыцарь",
+      "en": "Moose Knight",
+      "category_code": "dark"
+    },
+    {
+      "order": 26,
+      "ru": "Бизон Виньян",
+      "en": "Bison Winyan",
+      "category_code": "light"
+    },
+    {
+      "order": 27,
+      "ru": "Вапити Озула",
+      "en": "Elk Ozula",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 28,
+      "ru": "Медведь Горбатый Дух",
+      "en": "Bear Ridgeback Spirit",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 29,
+      "ru": "Олень Быстрая Тень",
+      "en": "Buck Shadow",
+      "category_code": "dark"
+    },
+    {
+      "order": 30,
+      "ru": "Вапити Инаме",
+      "en": "Elk Inahme",
+      "category_code": "light"
+    },
+    {
+      "order": 31,
+      "ru": "Аллигатор Бурая Кровь",
+      "en": "Alligator Banded",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 32,
+      "ru": "Кабан Икахи",
+      "en": "Boar Icahi",
+      "category_code": "patterned"
+    },
+    {
+      "order": 33,
+      "ru": "Толсторог Рог Крови",
+      "en": "Ram Rutile Horn",
+      "category_code": "dark"
+    },
+    {
+      "order": 34,
+      "ru": "Койот Млечный Путь",
+      "en": "Coyote Milk",
+      "category_code": "light"
+    },
+    {
+      "order": 35,
+      "ru": "Бизон Пэйта",
+      "en": "Bison Payta",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 36,
+      "ru": "Пантера Ивакта",
+      "en": "Panther Iwakta",
+      "category_code": "patterned"
+    },
+    {
+      "order": 37,
+      "ru": "Бобр Ночной Шорох",
+      "en": "Beaver Night",
+      "category_code": "dark"
+    },
+    {
+      "order": 38,
+      "ru": "Волк Лунный Камень",
+      "en": "Wolf Moonstone",
+      "category_code": "light"
+    },
+    {
+      "order": 39,
+      "ru": "Медведь Золотой Дух",
+      "en": "Bear Golden Spirit",
+      "category_code": "red_and_blond"
+    },
+    {
+      "order": 40,
+      "ru": "Лиса Пестрый Крест",
+      "en": "Fox Cross",
+      "category_code": "patterned"
+    },
+    {
+      "order": 41,
+      "ru": "Пума Сапа",
+      "en": "Cougar Sapa",
+      "category_code": "dark"
+    },
+    {
+      "order": 42,
+      "ru": "Лось Табачный Бок",
+      "en": "Moose Ruddy",
+      "category_code": "red_and_blond"
+    }
+  ]
+}

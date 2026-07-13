@@ -6,7 +6,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Legendary Animals Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=38">
+  <link rel="stylesheet" href="styles.css?v=39">
+  <link rel="stylesheet" href="fme.css?v=6">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
 </head>
@@ -14,7 +15,7 @@
   <aside class="sidebar">
     <header class="sidebar-header">
       <h1>Legendary Animals</h1>
-      <p class="subtitle">Game time synced with <a href="https://jeanropke.github.io/RDOMap/" target="_blank" rel="noopener">RDO Map</a> · <a href="guide.html">Guide</a> · <a href="index-ru.html">RU</a></p>
+      <p class="subtitle">RDO game time · <a href="guide.html">Guide</a> · <a href="legendary-events.html">Events</a> · <a href="builds.html">Builds</a> · <a href="index-ru.html">RU</a></p>
     </header>
 
     <section class="panel">
@@ -63,6 +64,48 @@
     <section class="panel stats">
       <div id="stats-text">Loading...</div>
       <button id="reset-progress" type="button">Reset progress</button>
+    </section>
+
+    <section class="panel" id="fme-settings-panel">
+      <h2>Legendary animal event sounds</h2>
+      <label class="checkbox fme-warn-row">
+        <input id="fme-sound-enabled" type="checkbox" checked>
+        <span class="fme-warn-label">Warn</span>
+        <input id="fme-minutes-before" type="number" min="1" max="60" value="10" class="fme-minutes-input">
+        <span class="fme-warn-label">min before</span>
+      </label>
+      <label class="checkbox">
+        <input id="fme-alert-at-start" type="checkbox" checked>
+        Sound at start
+      </label>
+      <p class="fme-settings-group-title">Sound alerts for Free Roam Events with legendary animals</p>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-alert-protect" type="checkbox" checked>
+        Protect Legendary Animal
+      </label>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-alert-tagging" type="checkbox" checked>
+        Wild Animal Tagging
+      </label>
+      <div class="fme-settings-actions">
+        <button type="button" id="fme-test-before">Test warning</button>
+        <button type="button" id="fme-test-start">Test start</button>
+      </div>
+      <p id="fme-sound-status" class="fme-sound-status" aria-live="polite"></p>
+      <p class="fme-settings-group-title">Map banners</p>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-show-all-banner" type="checkbox" checked>
+        All Free Roam Events
+      </label>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-show-legendary-banner" type="checkbox" checked>
+        Events with legendary animals
+      </label>
+      <p class="fme-settings-hint">
+        <a href="legendary-events.html">Legendary schedule</a> ·
+        <a href="fme-schedule.html">All events</a> ·
+        <a href="builds.html">Builds</a>
+      </p>
     </section>
 
     <section class="panel legend">
@@ -118,6 +161,24 @@
 
   <main class="map-wrap">
     <div id="map"></div>
+    <div class="fme-dock">
+      <div id="fme-legendary-banner" class="fme-banner fme-banner-legendary">
+        <h3 class="fme-banner-title fme-banner-title-long">
+          Free Roam Events with legendary animals
+          <a href="legendary-events.html">schedule</a>
+        </h3>
+        <div id="fme-legendary-next" class="fme-banner-row"></div>
+        <div id="fme-legendary-day"></div>
+      </div>
+      <div id="fme-all-banner" class="fme-banner">
+        <h3 class="fme-banner-title">
+          Free Roam Events
+          <a href="fme-schedule.html">all</a>
+        </h3>
+        <div id="fme-all-general" class="fme-banner-row"></div>
+        <div id="fme-all-role" class="fme-banner-row"></div>
+      </div>
+    </div>
     <div id="status" class="status-bar">Loading map...</div>
   </main>
 
@@ -136,6 +197,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>window.APP_LANG = "en";</script>
   <script src="bundled-data.js?v=1"></script>
-  <script src="app.js?v=38"></script>
+  <script src="fme-data.js?v=2"></script>
+  <script src="fme.js?v=7"></script>
+  <script src="app.js?v=40"></script>
 </body>
 </html>

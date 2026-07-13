@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommended Builds — Legendary Animals Map</title>
+  <link rel="stylesheet" href="guide.css?v=2">
+  <link rel="stylesheet" href="fme.css?v=4">
+  <link rel="stylesheet" href="builds.css?v=12">
+  <script src="site-config.js?v=1"></script>
+  <script src="metrika.js?v=1"></script>
+</head>
+<body>
+  <div class="fme-page-wrap" id="builds-page">
+    <header class="fme-page-header">
+      <h1>Recommended Ability Card Builds</h1>
+      <p class="fme-page-nav">
+        <a href="index.html">← Map</a>
+        <a href="legendary-events.html">Events</a>
+        <a href="fme-schedule.html">Schedule</a>
+        <a href="guide.html">Guide</a>
+        <a href="builds-ru.html">RU</a>
+      </p>
+    </header>
+
+    <p class="build-intro">
+      A summary of <strong>recommended ability card loadouts</strong> for Red Dead Online Free Roam Events and Showdown modes.
+      Community advice — not official Rockstar guides. Meta may change after patches.
+    </p>
+
+    <p class="build-disclaimer">
+      You can equip <strong>4 cards</strong>: 1 Dead Eye + 3 passive (slots unlock at ranks 10, 20, 40).
+      Upgrade cards to <strong>Tier III</strong> for best effect. Below are playstyle templates;
+      each event and mode lists several options — click a name to highlight cards on the right.
+    </p>
+
+    <div class="builds-layout">
+      <div class="builds-main">
+    <h2>Build templates</h2>
+    <p class="build-section-lead">Click a template to highlight cards on the right. Each event and mode lists several builds for different playstyles.</p>
+    <div id="builds-templates" class="build-templates-grid"></div>
+
+    <h2>Free Roam Events</h2>
+    <p class="build-section-lead"><a href="fme-schedule.html">Full schedule</a>.</p>
+    <div id="builds-fme" class="build-events-grid"></div>
+
+    <h2>Random Challenge variants</h2>
+    <p class="build-section-lead">When the schedule shows Random Challenge, one of these may roll:</p>
+    <div id="builds-random" class="build-events-grid"></div>
+
+    <h2>Showdown Series</h2>
+    <p class="build-section-lead">
+      Series and modes as in the stats / Quick Join menu: <strong>Takeover</strong>, <strong>Shootout</strong>,
+      <strong>Elimination</strong>, <strong>Race</strong>. Not Free Roam Events.
+    </p>
+    <div id="builds-showdown" class="build-showdown-wrap"></div>
+
+    <p class="fme-credits">
+      Ability cards: <a href="https://rockstarnews.ru/cards/en/all/" target="_blank" rel="noopener">Rockstar News</a>,
+      <a href="https://reddead.fandom.com/wiki/Red_Dead_Online_Ability_Cards" target="_blank" rel="noopener">Red Dead Wiki</a>.
+      Red Dead Redemption 2 © Rockstar Games.
+    </p>
+      </div>
+
+      <aside class="builds-cards-panel" aria-label="Ability cards">
+        <h3>Ability cards</h3>
+        <p id="builds-cards-hint" class="builds-cards-hint"></p>
+        <div id="builds-cards-legend" class="builds-cards-legend" hidden></div>
+        <div id="builds-cards-gallery"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>window.APP_LANG = "en";</script>
+  <script src="fme-data.js?v=2"></script>
+  <script src="ability-cards.js?v=7"></script>
+  <script src="ability-card-descriptions.js?v=3"></script>
+  <script src="builds-data.js?v=7"></script>
+  <script src="builds.js?v=15"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guide — Legendary Animals Map</title>
-  <link rel="stylesheet" href="guide.css?v=1">
+  <link rel="stylesheet" href="guide.css?v=4">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
 </head>
@@ -42,8 +42,7 @@
 
     <h2>2. Time and weather</h2>
     <p>
-      The left panel shows <strong>RDO game time</strong> (synced with
-      <a href="https://jeanropke.github.io/RDOMap/" target="_blank" rel="noopener">RDO Map</a>).
+      The left panel shows <strong>Red Dead Online game time</strong>, synced with the in-game clock.
     </p>
     <p>Select current in-game weather: Clear, Foggy, Storm, or Rain.</p>
 
@@ -68,7 +67,13 @@
     </p>
 
     <h2>5. Progress filter</h2>
-    <p>Use this to find animals by your progress state (incomplete, missing samples/photo, etc.).</p>
+    <p>Use this to find animals by your progress state:</p>
+    <ul>
+      <li>Incomplete</li>
+      <li>Missing samples</li>
+      <li>Missing photo</li>
+      <li>Individual toggles: Tracked, Killed, Skinned, Studied, Sedated, Samples, Photo, Garment</li>
+    </ul>
 
     <h2>6. Colors (legend)</h2>
     <table class="guide-table">
@@ -96,11 +101,13 @@
       <li>Click <strong>animal name</strong> to focus on map.</li>
       <li>Use <strong>“+”</strong> buttons to track progress.</li>
       <li>Cooldown start/end fields support 72h species cooldown.</li>
+      <li>Progress columns: Tracked, Killed, Skinned, Studied, Sedated, Samples, Photo, Garment.</li>
     </ul>
     <p class="note">Some Harriet-only animals appear in table only (no map zone).</p>
 
     <h2>9. Progress and cooldown</h2>
-    <p>Progress is saved automatically in browser localStorage.</p>
+    <p>Mark progress: Tracked, Killed, Skinned, Studied, Sedated, Samples, Photo, Garment. When all 8 are checked, the animal is complete.</p>
+    <p>Progress is saved automatically in your browser.</p>
     <p>Cooldown is shared per species (72h). Use <strong>72h</strong> to enable and <strong>OFF</strong> to clear.</p>
 
     <h2>10. Quick hunting workflow</h2>
@@ -111,6 +118,139 @@
       <li>Pick target on map/table.</li>
       <li>Mark progress and cooldown after hunt.</li>
     </ol>
+
+    <h2>11. Free Roam Events</h2>
+    <p>At the bottom of the map there are <strong>two banners</strong>:</p>
+    <ul>
+      <li><strong>Free Roam Events with legendary animals</strong> — nearest legendary event, today’s plan (4 slots), link to <a href="legendary-events.html">legendary schedule</a>.</li>
+      <li><strong>Free Roam Events</strong> (general) — nearest general and role events, link to <a href="fme-schedule.html">full schedule</a>.</li>
+    </ul>
+    <p>Event times use your <strong>real local time</strong> (not RDO game time). Time zone is detected automatically.</p>
+    <p>Hover over an event row in a banner for a <strong>description tooltip</strong>. The nearest legendary event is highlighted and marked <strong>(Nearest)</strong>.</p>
+    <p>Recommended ability card loadouts for events and Showdown modes: <a href="builds.html">Recommended builds</a> (see §11.5).</p>
+
+    <h3>11.1. Events with legendary animals</h3>
+    <table class="guide-table">
+      <thead>
+        <tr><th>Event</th><th>Label</th><th>Per day</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Protect Legendary Animal</strong></td>
+          <td>Legendary animal</td>
+          <td>2×</td>
+        </tr>
+        <tr>
+          <td><strong>Wild Animal Tagging</strong></td>
+          <td>Possible legendary animal</td>
+          <td>2×</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Daily schedule: <a href="legendary-events.html">legendary events page</a>.
+      All Free Roam Events: <a href="fme-schedule.html">full schedule</a> (includes Random Challenge variants).
+    </p>
+
+    <h3>11.2. Legendary animal event sounds</h3>
+    <ul>
+      <li><strong>Warn … min before</strong> — checkbox and number of minutes (configurable, default 10). Two short tones.</li>
+      <li><strong>Sound at start</strong> — separate longer signal when the event begins (on by default).</li>
+      <li>Enable alerts for <strong>Protect Legendary Animal</strong>, <strong>Wild Animal Tagging</strong>, or both.</li>
+      <li><strong>Test warning / Test start</strong> — preview sounds without waiting.</li>
+    </ul>
+    <p class="note">Settings saved in browser. Click the map once to unlock audio. The tab must stay open.</p>
+
+    <h3>11.3. Map banners</h3>
+    <ul>
+      <li><strong>All Free Roam Events</strong> — show or hide the general banner.</li>
+      <li><strong>Events with legendary animals</strong> — show or hide the legendary banner and day plan.</li>
+    </ul>
+
+    <h3>11.4. All event descriptions</h3>
+    <ul>
+      <li><strong>Hot Property</strong> — fight for a valuables bag.</li>
+      <li><strong>King of the Rail</strong> — hold a train car.</li>
+      <li><strong>Wild Animal Kills</strong> — most animal kills wins.</li>
+      <li><strong>Golden Hat</strong> — PvP while wearing the golden suit.</li>
+      <li><strong>Random Challenge</strong> — one of several PvP kill challenges (listed on the <a href="builds.html">builds page</a>).</li>
+      <li><strong>Wildlife Photographer</strong> — photograph animals for points.</li>
+      <li><strong>King of the Hill</strong> — capture zones.</li>
+      <li><strong>Fishing Challenge</strong> — largest fish wins.</li>
+      <li><strong>Dispatch Rider</strong> — horse delivery race.</li>
+      <li><strong>Master Archer</strong> — bow target shooting.</li>
+      <li><strong>Protect Legendary Animal</strong> — co-op escort.</li>
+      <li><strong>Day of Reckoning</strong> — bounty hunt in town.</li>
+      <li><strong>Wild Animal Tagging</strong> — sedate and tag; chance of legendary.</li>
+      <li><strong>Round Up</strong> — co-op bounty hunt across the map.</li>
+      <li><strong>Supply Train</strong> — defend a goods train.</li>
+      <li><strong>Condor Egg</strong> — find the egg first.</li>
+      <li><strong>Wreckage</strong> — collect items under bandit attack (one life).</li>
+    </ul>
+    <p>Full schedule: <a href="fme-schedule.html">schedule page</a>.</p>
+    <p class="note">
+      Event schedule is based on community data and may be updated over time.
+      Red Dead Redemption 2 © Rockstar Games.
+    </p>
+
+    <h3>11.5. Recommended ability builds</h3>
+    <p>
+      A separate page lists <strong>ability card loadouts</strong> and tips for every Free Roam Event and
+      <strong>Showdown Series</strong> mode (not the same as FME):
+      <a href="builds.html">Recommended builds</a>.
+    </p>
+
+    <h4>How to use</h4>
+    <ul>
+      <li>At the top — <strong>templates</strong> (PvP, PvE, bow, tank, etc.). Click one to highlight cards on the right. Click again to clear.</li>
+      <li>Each <strong>FME event</strong> and <strong>Showdown mode</strong> lists several matching templates — pick what fits your playstyle.</li>
+      <li><strong>Gold border</strong> — required card; <strong>cyan dashed border</strong> with OR — pick one of several options.</li>
+      <li>Hover a card on the right for its <strong>Tier III</strong> description (in-game text).</li>
+      <li>The gallery follows RDO categories: Dead Eye, Combat, Recovery, Defense.</li>
+    </ul>
+    <p class="note">
+      You equip <strong>4 cards</strong> in RDO: 1 Dead Eye + 3 passive (slots at ranks 10, 20, 40).
+      Upgrade cards to Tier III for full effect. Tips are community-sourced, not official Rockstar guides.
+    </p>
+
+    <h4>Free Roam Events on the builds page</h4>
+    <p>
+      All 17 scheduled events (see <a href="fme-schedule.html">full schedule</a>), including
+      <strong>Random Challenge</strong> variants (bow kills, headshots, horseback, longarm, sidearm, etc.).
+    </p>
+
+    <h4>Showdown Series</h4>
+    <p>
+      Official names appear in <strong>Quick Join</strong> (D-pad left) or the stats filter
+      (Series / Mode columns). On the builds page, modes are grouped by series:
+    </p>
+    <table class="guide-table">
+      <thead>
+        <tr><th>Series</th><th>Modes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Takeover</strong></td>
+          <td>Overrun, Hostile Territory, Plunder, Spoils of War, Up in Smoke</td>
+        </tr>
+        <tr>
+          <td><strong>Shootout</strong></td>
+          <td>Shootout, Team Shootout, Most Wanted, Name Your Weapon (FFA), Public Enemy, Name Your Weapon (Teams)</td>
+        </tr>
+        <tr>
+          <td><strong>Elimination</strong></td>
+          <td>Make It Count</td>
+        </tr>
+        <tr>
+          <td><strong>Race</strong></td>
+          <td>Race, Target Race, Open Race, Open Target Race</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Ability cards matter little in races — focus on horse and route. PvP modes suggest different templates
+      (e.g. Tank for Public Enemy, Melee for Name Your Weapon, Sniper for Most Wanted).
+    </p>
 
     <h2>Contact</h2>
     <p>Feedback: <a href="mailto:vit2811@mail.ru">vit2811@mail.ru</a></p>

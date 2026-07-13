@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Легендарные события — Карта легендарных животных</title>
+  <link rel="stylesheet" href="guide.css?v=1">
+  <link rel="stylesheet" href="fme.css?v=1">
+  <script src="site-config.js?v=1"></script>
+  <script src="metrika.js?v=1"></script>
+</head>
+<body data-fme-page="legendary">
+  <div class="fme-page-wrap" id="fme-schedule-page">
+    <header class="fme-page-header">
+      <h1>События с легендарными животными</h1>
+      <p class="fme-page-nav">
+        <a href="index-ru.html">← Карта</a>
+        <a href="fme-schedule-ru.html">Все события</a>
+        <a href="builds-ru.html">Билды</a>
+        <a href="guide-ru.html">Гайд</a>
+        <a href="legendary-events.html">English</a>
+      </p>
+    </header>
+
+    <p>
+      Для охоты на легендарных животных важны только два типа событий свободного режима.
+      Расписание повторяется каждый день. Время ниже — в <strong>вашем часовом поясе</strong>.
+    </p>
+
+    <div class="fme-tz-box">
+      <strong>Ваш часовой пояс:</strong> <span id="fme-timezone">…</span><br>
+      <span id="fme-day-label">Сегодня</span>
+    </div>
+
+    <table class="fme-schedule-table">
+      <thead>
+        <tr>
+          <th>Локальное время</th>
+          <th class="fme-col-utc">UTC</th>
+          <th>Событие</th>
+          <th>До начала</th>
+        </tr>
+      </thead>
+      <tbody id="fme-schedule-body"></tbody>
+    </table>
+
+    <div class="fme-desc-block" id="fme-descriptions">
+      <h2>Описания</h2>
+      <div class="fme-desc-item">
+        <h3>Защитите легендарное животное <span class="fme-badge fme-badge-primary">Легендарное животное</span></h3>
+        <p>Кооператив: освободите легендарное животное от браконьеров и сопроводите до безопасного места. Не подходите слишком близко — испугается. После события часто можно осмотреть или взять образец в свободном режиме. <strong>2 раза в сутки.</strong></p>
+      </div>
+      <div class="fme-desc-item">
+        <h3>Маркировка диких животных <span class="fme-badge fme-badge-secondary">Возможно легендарное животное</span></h3>
+        <p>Усыпляйте и маркируйте животных нужных видов за ~10 минут. Может появиться бонусное легендарное животное, но гарантии нет. <strong>2 раза в сутки.</strong></p>
+      </div>
+    </div>
+
+    <p class="note">На карте в левой панели можно настроить звуковые оповещения: заранее (за выбранное число минут) и при начале каждого из этих событий.</p>
+
+    <p class="fme-credits">
+      Расписание событий — по данным сообщества. Red Dead Redemption 2 © Rockstar Games.
+    </p>
+  </div>
+
+  <script>window.APP_LANG = "ru";</script>
+  <script src="fme-data.js?v=1"></script>
+  <script src="fme.js?v=1"></script>
+</body>
+</html>

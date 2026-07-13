@@ -6,7 +6,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Карта легендарных животных</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=38">
+  <link rel="stylesheet" href="styles.css?v=39">
+  <link rel="stylesheet" href="fme.css?v=6">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
 </head>
@@ -14,7 +15,7 @@
   <aside class="sidebar">
     <header class="sidebar-header">
       <h1>Легендарные животные</h1>
-      <p class="subtitle">Время как на <a href="https://jeanropke.github.io/RDOMap/" target="_blank" rel="noopener">RDO Map</a> · <a href="guide-ru.html">Гайд</a> · <a href="index.html">EN</a></p>
+      <p class="subtitle">Игровое время RDO · <a href="guide-ru.html">Гайд</a> · <a href="legendary-events-ru.html">События</a> · <a href="builds-ru.html">Билды</a> · <a href="index.html">EN</a></p>
     </header>
 
     <section class="panel">
@@ -65,6 +66,48 @@
       <button id="reset-progress" type="button">Сбросить прогресс</button>
     </section>
 
+    <section class="panel" id="fme-settings-panel">
+      <h2>Звук событий с участием легендарных животных</h2>
+      <label class="checkbox fme-warn-row">
+        <input id="fme-sound-enabled" type="checkbox" checked>
+        <span class="fme-warn-label">Предупреждать за</span>
+        <input id="fme-minutes-before" type="number" min="1" max="60" value="10" class="fme-minutes-input">
+        <span class="fme-warn-label">мин.</span>
+      </label>
+      <label class="checkbox">
+        <input id="fme-alert-at-start" type="checkbox" checked>
+        Звук при начале
+      </label>
+      <p class="fme-settings-group-title">Звуковое оповещение о событиях свободного режима с участием легендарных животных</p>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-alert-protect" type="checkbox" checked>
+        Защитите легендарное животное
+      </label>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-alert-tagging" type="checkbox" checked>
+        Маркировка диких животных
+      </label>
+      <div class="fme-settings-actions">
+        <button type="button" id="fme-test-before">Тест: предупреждение</button>
+        <button type="button" id="fme-test-start">Тест: начало</button>
+      </div>
+      <p id="fme-sound-status" class="fme-sound-status" aria-live="polite"></p>
+      <p class="fme-settings-group-title">Баннеры на карте</p>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-show-all-banner" type="checkbox" checked>
+        Все события свободного режима
+      </label>
+      <label class="checkbox fme-settings-indent">
+        <input id="fme-show-legendary-banner" type="checkbox" checked>
+        События с участием легендарных животных
+      </label>
+      <p class="fme-settings-hint">
+        <a href="legendary-events-ru.html">Расписание легендарных</a> ·
+        <a href="fme-schedule-ru.html">Все события</a> ·
+        <a href="builds-ru.html">Билды</a>
+      </p>
+    </section>
+
     <section class="panel legend">
       <h2>Цвета</h2>
       <div class="legend-item"><span class="dot available"></span> Доступно</div>
@@ -98,14 +141,14 @@
             <th>Животное</th>
             <th class="col-time"><span class="th-multiline">Время</span></th>
             <th><span class="th-multiline">Погода</span></th>
-            <th class="col-progress"><span class="th-progress-vertical">Отслежено</span></th>
+            <th class="col-progress"><span class="th-progress-vertical">Выслежено</span></th>
             <th class="col-progress"><span class="th-progress-vertical">Убито</span></th>
             <th class="col-progress"><span class="th-progress-vertical">Освежевано</span></th>
             <th class="col-progress"><span class="th-progress-vertical">Изучено</span></th>
             <th class="col-progress"><span class="th-progress-vertical">Усыплено</span></th>
-            <th class="col-progress"><span class="th-progress-vertical">Образцы</span></th>
-            <th class="col-progress"><span class="th-progress-vertical">Фото</span></th>
-            <th class="col-progress"><span class="th-progress-vertical">Одежда</span></th>
+            <th class="col-progress"><span class="th-progress-vertical">Образцов взято</span></th>
+            <th class="col-progress"><span class="th-progress-vertical">Сфотографировано</span></th>
+            <th class="col-progress"><span class="th-progress-vertical">Одежда Гас.</span></th>
             <th class="col-cooldown"><span class="th-multiline">Начало<br>кулдауна</span></th>
             <th class="col-cooldown"><span class="th-multiline">Конец<br>кулдауна</span></th>
             <th class="col-cooldown-actions"><span class="th-multiline">Кулдаун</span></th>
@@ -118,6 +161,24 @@
 
   <main class="map-wrap">
     <div id="map"></div>
+    <div class="fme-dock">
+      <div id="fme-legendary-banner" class="fme-banner fme-banner-legendary">
+        <h3 class="fme-banner-title fme-banner-title-long">
+          События свободного режима с участием легендарных животных
+          <a href="legendary-events-ru.html">расписание</a>
+        </h3>
+        <div id="fme-legendary-next" class="fme-banner-row"></div>
+        <div id="fme-legendary-day"></div>
+      </div>
+      <div id="fme-all-banner" class="fme-banner">
+        <h3 class="fme-banner-title">
+          События свободного режима
+          <a href="fme-schedule-ru.html">все</a>
+        </h3>
+        <div id="fme-all-general" class="fme-banner-row"></div>
+        <div id="fme-all-role" class="fme-banner-row"></div>
+      </div>
+    </div>
     <div id="status" class="status-bar">Загрузка карты...</div>
   </main>
 
@@ -136,6 +197,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>window.APP_LANG = "ru";</script>
   <script src="bundled-data.js?v=1"></script>
-  <script src="app.js?v=38"></script>
+  <script src="fme-data.js?v=2"></script>
+  <script src="fme.js?v=7"></script>
+  <script src="app.js?v=40"></script>
 </body>
 </html>
