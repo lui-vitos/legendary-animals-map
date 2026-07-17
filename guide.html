@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guide — Legendary Animals Map</title>
-  <link rel="stylesheet" href="guide.css?v=4">
+  <link rel="stylesheet" href="guide.css?v=5">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
 </head>
@@ -44,13 +44,19 @@
     <p>
       The left panel shows <strong>Red Dead Online game time</strong>, synced with the in-game clock.
     </p>
-    <p>Select current in-game weather: Clear, Foggy, Storm, or Rain.</p>
+    <p>
+      Weather is a <strong>multi-select</strong>: Clear, Foggy, Storm, Rain.
+      An animal matches weather if its requirement matches <strong>at least one</strong> selected option.
+      This helps when hunting rare spawns and session weather is uncertain or changes often.
+    </p>
+    <p>By default all weather types are selected. Uncheck ones you do not want.</p>
 
     <h2>3. Main filters</h2>
     <ul>
-      <li><strong>Only available</strong> — shows animals matching current time and weather.</li>
+      <li><strong>Only available</strong> — shows animals matching current time and selected weather.</li>
       <li><strong>Hide on cooldown</strong> — hides animals on species cooldown.</li>
-      <li><strong>Hide completed on map</strong> — hides fully completed animals.</li>
+      <li><strong>Hide completed on map</strong> — hides fully completed animals from the map (all 8 progress marks).</li>
+      <li><strong>Hide completed in table</strong> — hides fully completed animals from the table so you only see unfinished ones.</li>
       <li><strong>Fast travel</strong> — toggles fast travel points.</li>
     </ul>
 
@@ -62,8 +68,8 @@
       <li>Patterned</li>
     </ul>
     <p class="note">
-      Category filters affect the <strong>map</strong>. The table always shows all animals,
-      but status highlighting updates.
+      Category filters affect the <strong>map</strong>. The table follows category highlighting
+      and can hide fully completed animals when that filter is enabled.
     </p>
 
     <h2>5. Progress filter</h2>
@@ -81,7 +87,7 @@
         <tr><th>Color</th><th>Meaning</th></tr>
       </thead>
       <tbody>
-        <tr><td>Green</td><td>Available now (time + weather match)</td></tr>
+        <tr><td>Green</td><td>Available now (time + at least one selected weather)</td></tr>
         <tr><td>Yellow/orange</td><td>Not suitable now</td></tr>
         <tr><td>Red</td><td>On cooldown</td></tr>
         <tr><td>Blue</td><td>Completed</td></tr>
@@ -113,8 +119,9 @@
     <h2>10. Quick hunting workflow</h2>
     <ol>
       <li>Open map and choose language.</li>
-      <li>Set current weather.</li>
+      <li>Select matching weather (multi-select allowed).</li>
       <li>Enable “Only available”.</li>
+      <li>Optionally enable “Hide completed in table”.</li>
       <li>Pick target on map/table.</li>
       <li>Mark progress and cooldown after hunt.</li>
     </ol>

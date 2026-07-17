@@ -42,6 +42,8 @@ const I18N = {
     tableOnlySuffix: "table only (no map zone)",
     statsText: "Map: {map}, table: {table}. Cooldown by species.",
     statusBar: "RDO time: {time}, weather: {weather} | map v{version}",
+    weatherNoneSelected: "none",
+    weatherAllSelected: "any selected",
     progressFilterIncomplete: "Incomplete",
     progressFilterNoSamples: "Missing samples",
     progressFilterNoPhoto: "Missing photo",
@@ -97,6 +99,8 @@ const I18N = {
     tableOnlySuffix: "только в таблице (на карте нет зоны)",
     statsText: "Карта: {map}, таблица: {table}. Кулдаун по виду.",
     statusBar: "Время RDO: {time}, погода: {weather} | карта v{version}",
+    weatherNoneSelected: "не выбрана",
+    weatherAllSelected: "любая из выбранных",
     progressFilterIncomplete: "Незавершённые",
     progressFilterNoSamples: "Без образцов взято",
     progressFilterNoPhoto: "Не сфотографировано",
@@ -145,7 +149,7 @@ const ZONE_SELECTED_WEIGHT = 4;
 const RDO_ICON_BASE =
   "https://jeanropke.github.io/RDOMap/assets/images/icons/game/animals/legendaries";
 const RDO_ASSETS_BASE = "https://jeanropke.github.io/RDOMap/assets/images/icons";
-const APP_VERSION = "33";
+const APP_VERSION = "34";
 const TABLE_COLLAPSED_KEY = "legendary-map-table-collapsed";
 const MAP_ZOOM_BASE = 3;
 const SPAWN_ICON_SIZE = 18;
@@ -461,8 +465,19 @@ function getCurrentGameHour() {
   return getRdoGameTime().getUTCHours();
 }
 
-function getCurrentWeather() {
-  return document.getElementById("game-weather").value;
+function getSelectedWeathers() {
+  return [...document.querySelectorAll("#weather-filters input[name='weather']:checked")].map(
+    (input) => input.value,
+  );
+}
+
+function getSelectedWeatherLabels() {
+  const labels = [...document.querySelectorAll("#weather-filters input[name='weather']:checked")].map(
+    (input) => input.parentElement?.textContent?.trim() || input.value,
+  );
+  if (labels.length === 0) return L10N.weatherNoneSelected;
+  if (labels.length === 4) return L10N.weatherAllSelected;
+  return labels.join(", ");
 }
 
 function hourInWindow(hour, [start, end]) {
@@ -475,19 +490,20 @@ function matchesTime(animal, hour) {
   return animal.time_windows.some((window) => hourInWindow(hour, window));
 }
 
-function matchesWeather(animal, weather) {
-  return animal.weather_code === WEATHER_ANY || animal.weather_code === weather;
+function matchesWeather(animal, weathers) {
+  if (!weathers?.length) return false;
+  return animal.weather_code === WEATHER_ANY || weathers.includes(animal.weather_code);
 }
 
 function isCompleted(progress) {
   return Object.values(progress).every(Boolean);
 }
 
-function getAnimalStatus(animal, hour, weather, now = new Date()) {
+function getAnimalStatus(animal, hour, weathers, now = new Date()) {
   const progress = getProgress(animal.id);
   if (isCompleted(progress)) return "done";
   if (isOnCooldown(animal.id, now)) return "cooldown";
-  if (matchesTime(animal, hour) && matchesWeather(animal, weather)) return "available";
+  if (matchesTime(animal, hour) && matchesWeather(animal, weathers)) return "available";
   return "waiting";
 }
 
@@ -514,10 +530,11 @@ function getFilters() {
 
   return {
     hour: getCurrentGameHour(),
-    weather: getCurrentWeather(),
+    weathers: getSelectedWeathers(),
     onlyAvailable: document.getElementById("only-available").checked,
     hideCooldown: document.getElementById("hide-cooldown").checked,
     hideCompleted: document.getElementById("hide-completed").checked,
+    hideCompletedTable: document.getElementById("hide-completed-table")?.checked ?? false,
     categories,
     progressModes,
   };
@@ -527,7 +544,7 @@ function animalPassesFilters(animal, filters, now = new Date()) {
   if (!filters.categories.includes(animal.category)) return false;
 
   const progress = getProgress(animal.id);
-  const status = getAnimalStatus(animal, filters.hour, filters.weather, now);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers, now);
   if (filters.onlyAvailable && status !== "available") return false;
   if (filters.hideCooldown && status === "cooldown") return false;
   if (filters.hideCompleted && status === "done") return false;
@@ -604,7 +621,7 @@ function getPopupContentForAnimal(animalId) {
   const animal = animals.find((item) => item.id === animalId);
   if (!animal) return "";
   const filters = getFilters();
-  const status = getAnimalStatus(animal, filters.hour, filters.weather);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers);
   return buildPopup(animal, status);
 }
 
@@ -649,7 +666,7 @@ function refreshZoneSelectionStyles() {
   const filters = getFilters();
   for (const entry of animalLayers.values()) {
     if (!entry.animal) continue;
-    const status = getAnimalStatus(entry.animal, filters.hour, filters.weather);
+    const status = getAnimalStatus(entry.animal, filters.hour, filters.weathers);
     setLayerStyle(entry, status);
   }
 }
@@ -668,7 +685,7 @@ function syncPopupProgressUI(animalId) {
   const entry = animalLayers.get(animalId);
   if (animal && entry) {
     const filters = getFilters();
-    setLayerStyle(entry, getAnimalStatus(animal, filters.hour, filters.weather));
+    setLayerStyle(entry, getAnimalStatus(animal, filters.hour, filters.weathers));
   }
   updateStats();
 }
@@ -917,7 +934,7 @@ function updateMapMarkerIcons() {
   for (const entry of animalLayers.values()) {
     if (!entry.animal) continue;
     const filters = getFilters();
-    const status = getAnimalStatus(entry.animal, filters.hour, filters.weather);
+    const status = getAnimalStatus(entry.animal, filters.hour, filters.weathers);
     const dimmed = status === "cooldown";
 
     for (const pointMarker of entry.points) {
@@ -928,7 +945,7 @@ function updateMapMarkerIcons() {
 
 function createAnimalLayers(animal) {
   const filters = getFilters();
-  const status = getAnimalStatus(animal, filters.hour, filters.weather);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers);
   const group = L.layerGroup();
 
   const zone = L.circle([animal.x, animal.y], {
@@ -985,6 +1002,7 @@ function refreshSpeciesUI(species, focusAnimalId = null) {
     refreshAnimalOnMap(animal.id, openAnimalId === animal.id || focusAnimalId === animal.id);
     updateTableRow(animal.id);
   }
+  syncCategoryRowVisibility();
   updateStats();
 }
 
@@ -1019,7 +1037,7 @@ function buildProgressCell(animalId, field) {
   return `<button type="button" class="cell-progress ${done ? "done" : ""}" data-animal-id="${animalId}" data-field="${field}" title="${PROGRESS_LABELS[field]}">${done ? "+" : ""}</button>`;
 }
 
-function getAnimalRowClasses(animal, status) {
+function getAnimalRowClasses(animal, status, filters = getFilters()) {
   return [
     "animal-row",
     `status-${status}`,
@@ -1027,12 +1045,13 @@ function getAnimalRowClasses(animal, status) {
     isCompleted(getProgress(animal.id)) ? "progress-complete" : "",
     isOnCooldown(animal.id) ? "cooldown-active-row" : "",
     openAnimalId === animal.id ? "map-selected" : "",
+    filters.hideCompletedTable && isCompleted(getProgress(animal.id)) ? "table-row-hidden" : "",
   ].filter(Boolean).join(" ");
 }
 
 function buildAnimalRow(animal) {
   const filters = getFilters();
-  const status = getAnimalStatus(animal, filters.hour, filters.weather);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers);
   const cooldownStart = getCooldownStart(animal.id);
   const cooldownEnd = getCooldownEnd(animal.id);
   const startInputValue =
@@ -1049,7 +1068,7 @@ function buildAnimalRow(animal) {
       <button type="button" class="cooldown-btn" data-action="clear-cooldown" data-animal-id="${animal.id}">${L10N.cooldownOff}</button>
     </div>`;
 
-  const rowClass = getAnimalRowClasses(animal, status);
+  const rowClass = getAnimalRowClasses(animal, status, filters);
 
   return `
     <tr class="${rowClass}" data-animal-id="${animal.id}">
@@ -1112,6 +1131,31 @@ function renderTable() {
   }
 
   tbody.innerHTML = rows.join("");
+  syncCategoryRowVisibility();
+}
+
+function syncCategoryRowVisibility() {
+  const tbody = document.getElementById("animals-table-body");
+  if (!tbody) return;
+
+  let categoryRow = null;
+  let visibleInCategory = 0;
+
+  const flush = () => {
+    if (!categoryRow) return;
+    categoryRow.classList.toggle("table-row-hidden", visibleInCategory === 0);
+  };
+
+  for (const row of tbody.querySelectorAll("tr")) {
+    if (row.classList.contains("category-row")) {
+      flush();
+      categoryRow = row;
+      visibleInCategory = 0;
+      continue;
+    }
+    if (!row.classList.contains("table-row-hidden")) visibleInCategory += 1;
+  }
+  flush();
 }
 
 function updateTableRow(animalId) {
@@ -1119,12 +1163,6 @@ function updateTableRow(animalId) {
   const row = document.querySelector(`#animals-table-body tr[data-animal-id="${animalId}"]`);
   if (!animal || !row) return;
   row.outerHTML = buildAnimalRow(animal);
-}
-
-function updateAllTableRows() {
-  for (const animal of animals) {
-    updateTableRow(animal.id);
-  }
 }
 
 function initTableHandlers() {
@@ -1192,7 +1230,7 @@ function refreshAnimalOnMap(animalId, keepPopupOpen = false) {
   if (!animal || !entry) return;
 
   const filters = getFilters();
-  const status = getAnimalStatus(animal, filters.hour, filters.weather);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers);
   const visible = animalPassesFilters(animal, filters);
   setLayerStyle(entry, status);
 
@@ -1241,7 +1279,7 @@ function syncMapLayersFromFilters(now = new Date()) {
     if (!entry) continue;
 
     const visible = animalPassesFilters(animal, filters, now);
-    const status = getAnimalStatus(animal, filters.hour, filters.weather, now);
+    const status = getAnimalStatus(animal, filters.hour, filters.weathers, now);
     setLayerStyle(entry, status);
 
     if (visible) {
@@ -1272,7 +1310,7 @@ function updateStats() {
   document.getElementById("game-clock").textContent = formatGameClock(gameTime);
   document.getElementById("status").textContent = L10N.statusBar
     .replace("{time}", formatGameClock(gameTime))
-    .replace("{weather}", document.getElementById("game-weather").selectedOptions[0].textContent)
+    .replace("{weather}", getSelectedWeatherLabels())
     .replace("{version}", APP_VERSION);
 }
 
@@ -1282,14 +1320,21 @@ function updateTableRowStatus(animalId) {
   if (!animal || !row) return;
 
   const filters = getFilters();
-  const status = getAnimalStatus(animal, filters.hour, filters.weather);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers);
   const completed = isCompleted(getProgress(animal.id));
-  row.className = getAnimalRowClasses(animal, status);
+  row.className = getAnimalRowClasses(animal, status, filters);
 
   const nameBtn = row.querySelector(".animal-name-btn");
   if (nameBtn) {
     nameBtn.classList.toggle("completed", completed);
   }
+}
+
+function updateAllTableRows() {
+  for (const animal of animals) {
+    updateTableRow(animal.id);
+  }
+  syncCategoryRowVisibility();
 }
 
 function syncPopupTimeRemaining() {
@@ -1301,7 +1346,7 @@ function syncPopupTimeRemaining() {
   if (!animal) return;
 
   const filters = getFilters();
-  const status = getAnimalStatus(animal, filters.hour, filters.weather);
+  const status = getAnimalStatus(animal, filters.hour, filters.weathers);
   let remainingEl = popupRoot.querySelector(".popup-time-remaining");
 
   if (status !== "available") {
@@ -1333,6 +1378,7 @@ function updateClock() {
   for (const animal of animals) {
     updateTableRowStatus(animal.id);
   }
+  syncCategoryRowVisibility();
   syncPopupTimeRemaining();
   syncMapSelectionHighlight();
 }

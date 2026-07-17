@@ -159,6 +159,26 @@ button:hover {
   gap: 4px;
 }
 
+.filter-block {
+  margin-bottom: 8px;
+}
+
+.filter-block-title {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.weather-filters {
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 8px;
+}
+
+.animals-table tr.table-row-hidden {
+  display: none;
+}
+
 .stats {
   font-size: 9.5px;
   color: var(--muted);

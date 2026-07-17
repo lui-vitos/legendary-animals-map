@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Legendary Animals Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=39">
+  <link rel="stylesheet" href="styles.css?v=40">
   <link rel="stylesheet" href="fme.css?v=6">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
@@ -24,15 +24,15 @@
         <span class="clock-label">Time</span>
         <strong id="game-clock">--:--</strong>
       </div>
-      <label>
-        Weather
-        <select id="game-weather">
-          <option value="clear">Clear</option>
-          <option value="foggy">Foggy</option>
-          <option value="storm">Storm</option>
-          <option value="rain">Rain</option>
-        </select>
-      </label>
+      <div class="filter-block">
+        <span class="filter-block-title">Weather (multi-select)</span>
+        <div id="weather-filters" class="checkbox-grid weather-filters">
+          <label><input type="checkbox" name="weather" value="clear" checked> Clear</label>
+          <label><input type="checkbox" name="weather" value="foggy" checked> Foggy</label>
+          <label><input type="checkbox" name="weather" value="storm" checked> Storm</label>
+          <label><input type="checkbox" name="weather" value="rain" checked> Rain</label>
+        </div>
+      </div>
       <label class="checkbox">
         <input id="only-available" type="checkbox">
         Only available
@@ -44,6 +44,10 @@
       <label class="checkbox">
         <input id="hide-completed" type="checkbox">
         Hide completed on map
+      </label>
+      <label class="checkbox">
+        <input id="hide-completed-table" type="checkbox">
+        Hide completed in table
       </label>
       <label class="checkbox">
         <input id="show-fast-travel" type="checkbox" checked>
@@ -199,6 +203,6 @@
   <script src="bundled-data.js?v=1"></script>
   <script src="fme-data.js?v=2"></script>
   <script src="fme.js?v=7"></script>
-  <script src="app.js?v=40"></script>
+  <script src="app.js?v=41"></script>
 </body>
 </html>

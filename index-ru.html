@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Карта легендарных животных</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=39">
+  <link rel="stylesheet" href="styles.css?v=40">
   <link rel="stylesheet" href="fme.css?v=6">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
@@ -24,15 +24,15 @@
         <span class="clock-label">Время</span>
         <strong id="game-clock">--:--</strong>
       </div>
-      <label>
-        Погода
-        <select id="game-weather">
-          <option value="clear">Ясно</option>
-          <option value="foggy">Туман</option>
-          <option value="storm">Буря</option>
-          <option value="rain">Дождь</option>
-        </select>
-      </label>
+      <div class="filter-block">
+        <span class="filter-block-title">Погода (можно несколько)</span>
+        <div id="weather-filters" class="checkbox-grid weather-filters">
+          <label><input type="checkbox" name="weather" value="clear" checked> Ясно</label>
+          <label><input type="checkbox" name="weather" value="foggy" checked> Туман</label>
+          <label><input type="checkbox" name="weather" value="storm" checked> Буря</label>
+          <label><input type="checkbox" name="weather" value="rain" checked> Дождь</label>
+        </div>
+      </div>
       <label class="checkbox">
         <input id="only-available" type="checkbox">
         Только доступные
@@ -44,6 +44,10 @@
       <label class="checkbox">
         <input id="hide-completed" type="checkbox">
         Скрыть выполненные на карте
+      </label>
+      <label class="checkbox">
+        <input id="hide-completed-table" type="checkbox">
+        Скрыть выполненных в таблице
       </label>
       <label class="checkbox">
         <input id="show-fast-travel" type="checkbox" checked>
@@ -199,6 +203,6 @@
   <script src="bundled-data.js?v=1"></script>
   <script src="fme-data.js?v=2"></script>
   <script src="fme.js?v=7"></script>
-  <script src="app.js?v=40"></script>
+  <script src="app.js?v=41"></script>
 </body>
 </html>
