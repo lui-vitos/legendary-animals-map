@@ -149,14 +149,16 @@ const ZONE_SELECTED_WEIGHT = 4;
 const RDO_ICON_BASE =
   "https://jeanropke.github.io/RDOMap/assets/images/icons/game/animals/legendaries";
 const RDO_ASSETS_BASE = "https://jeanropke.github.io/RDOMap/assets/images/icons";
-const APP_VERSION = "35";
+const APP_VERSION = "36";
 const TABLE_COLLAPSED_KEY = "legendary-map-table-collapsed";
 const MAP_ZOOM_BASE = 3;
 const SPAWN_ICON_SIZE = 18;
 const SPAWN_POINT_COLOR = "#ff2d2d";
 const FAST_TRAVEL_ICON_SIZE = 34;
 const ZONE_TIMER_SIZE_RATIO = 0.7;
-const ZONE_TIMER_MIN_PX = 28;
+const ZONE_TIMER_MIN_PX = 36;
+const ZONE_TIMER_DOT_COLOR = "rgba(12, 10, 8, 0.9)";
+const ZONE_TIMER_HALO_COLOR = "rgba(255, 248, 230, 0.92)";
 
 /** 5x7 LED digit patterns (1 = lit dot). */
 const LED_DIGIT_PATTERNS = {
@@ -914,17 +916,33 @@ function getSpawnIconSize(zoom = getMapZoom()) {
 }
 
 function getZoneRadiusPx(entry) {
-  if (entry?.zone?._radius > 0) return entry.zone._radius;
   if (!map || !entry?.animal) return 0;
+
+  const el = entry.zone?.getElement?.();
+  if (el && typeof el.getBBox === "function") {
+    try {
+      const bbox = el.getBBox();
+      if (bbox && bbox.width > 0 && bbox.height > 0) {
+        return Math.max(bbox.width, bbox.height) / 2;
+      }
+    } catch {
+      // SVG may not be ready yet
+    }
+  }
+
+  if (entry?.zone?._radius > 0) return entry.zone._radius;
+
   const animal = entry.animal;
-  const center = map.latLngToLayerPoint([animal.x, animal.y]);
-  const edge = map.latLngToLayerPoint([animal.x + animal.radius, animal.y]);
+  const zoom = map.getZoom();
+  const center = map.project([animal.x, animal.y], zoom);
+  const edge = map.project([animal.x + animal.radius, animal.y], zoom);
   return Math.max(0, Math.hypot(edge.x - center.x, edge.y - center.y));
 }
 
 function getZoneTimerDisplaySize(entry) {
   const radiusPx = getZoneRadiusPx(entry);
   if (radiusPx <= 0) return 0;
+  // Target: timer digit height ≈ 70% of circle diameter
   return Math.round(radiusPx * 2 * ZONE_TIMER_SIZE_RATIO);
 }
 
@@ -936,19 +954,25 @@ function formatZoneTimerMinutes(animal, gameTime = getRdoGameTime()) {
   return String(Math.max(1, Math.ceil(gameMinutes / 30)));
 }
 
-function buildLedDigitSvg(digit, x, y, cell, gap, color) {
+function buildLedDigitSvg(digit, x, y, cell, gap, fillColor, haloColor) {
   const pattern = LED_DIGIT_PATTERNS[digit];
   if (!pattern) return "";
   const dots = [];
   const step = cell + gap;
-  const r = Math.max(0.35, cell * 0.42);
+  const r = Math.max(0.45, cell * 0.48);
+  const haloR = r * 1.55;
   for (let row = 0; row < pattern.length; row += 1) {
     const line = pattern[row];
     for (let col = 0; col < line.length; col += 1) {
       if (line[col] !== "1") continue;
       const cx = x + col * step + cell / 2;
       const cy = y + row * step + cell / 2;
-      dots.push(`<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" fill="${color}"/>`);
+      dots.push(
+        `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${haloR.toFixed(2)}" fill="${haloColor}"/>`,
+      );
+      dots.push(
+        `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" fill="${fillColor}"/>`,
+      );
     }
   }
   return dots.join("");
@@ -961,24 +985,24 @@ function buildLedTimerSvg(text, widthPx, heightPx) {
   const colsPerDigit = 5;
   const rows = 7;
   const digitGaps = Math.max(0, digits.length - 1);
-  const gapRatio = 0.22;
-  const cellByWidth = widthPx / (digits.length * colsPerDigit + digitGaps * 1.35 + digits.length * colsPerDigit * gapRatio);
-  const cellByHeight = heightPx / (rows + (rows - 1) * gapRatio);
-  const cell = Math.max(0.6, Math.min(cellByWidth, cellByHeight));
+  const gapRatio = 0.16;
+  // Fit digits to fill nearly the full height (≈70% of zone)
+  const cell = Math.max(0.8, heightPx / (rows + (rows - 1) * gapRatio));
   const gap = cell * gapRatio;
   const step = cell + gap;
-  const digitGap = step * 1.15;
+  const digitGap = step * 0.9;
   const digitWidth = colsPerDigit * step - gap;
   const totalWidth = digits.length * digitWidth + digitGaps * digitGap;
   const totalHeight = rows * step - gap;
   const offsetX = Math.max(0, (widthPx - totalWidth) / 2);
   const offsetY = Math.max(0, (heightPx - totalHeight) / 2);
-  const color = "rgba(236, 245, 255, 0.78)";
 
   let x = offsetX;
   const parts = [];
   for (const digit of digits) {
-    parts.push(buildLedDigitSvg(digit, x, offsetY, cell, gap, color));
+    parts.push(
+      buildLedDigitSvg(digit, x, offsetY, cell, gap, ZONE_TIMER_DOT_COLOR, ZONE_TIMER_HALO_COLOR),
+    );
     x += digitWidth + digitGap;
   }
 
@@ -995,8 +1019,10 @@ function buildZoneTimerIcon(text, sizePx) {
     });
   }
 
-  const width = sizePx;
-  const height = Math.max(Math.round(sizePx * 0.42), Math.round(ZONE_TIMER_MIN_PX * 0.42));
+  // sizePx = desired digit-block height (~70% of zone diameter)
+  const height = sizePx;
+  const digitCount = String(text).replace(/\D/g, "").length || 1;
+  const width = Math.max(sizePx, Math.round(height * (0.2 + digitCount * 0.78)));
   const svg = buildLedTimerSvg(text, width, height);
 
   return L.divIcon({

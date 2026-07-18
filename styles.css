@@ -697,7 +697,6 @@ body.table-collapsed .table-panel-toggle {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.55));
 }
 
 .zone-timer-svg {
@@ -713,19 +712,20 @@ body.table-collapsed .table-panel-toggle {
 .spawn-pin {
   position: relative;
   display: block;
+  opacity: 0.45;
 }
 
 .spawn-pin.dimmed {
-  opacity: 0.55;
+  opacity: 0.28;
 }
 
 .spawn-pin-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: #ff2d2d;
-  border: 1.5px solid #2b0000;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.85);
+  background: rgba(255, 45, 45, 0.55);
+  border: 1.5px solid rgba(43, 0, 0, 0.45);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
 }
 
 .spawn-pin img {
