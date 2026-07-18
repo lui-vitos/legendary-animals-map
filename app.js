@@ -149,16 +149,18 @@ const ZONE_SELECTED_WEIGHT = 4;
 const RDO_ICON_BASE =
   "https://jeanropke.github.io/RDOMap/assets/images/icons/game/animals/legendaries";
 const RDO_ASSETS_BASE = "https://jeanropke.github.io/RDOMap/assets/images/icons";
-const APP_VERSION = "36";
+const APP_VERSION = "39";
 const TABLE_COLLAPSED_KEY = "legendary-map-table-collapsed";
 const MAP_ZOOM_BASE = 3;
 const SPAWN_ICON_SIZE = 18;
 const SPAWN_POINT_COLOR = "#ff2d2d";
 const FAST_TRAVEL_ICON_SIZE = 34;
-const ZONE_TIMER_SIZE_RATIO = 0.7;
-const ZONE_TIMER_MIN_PX = 36;
+const ZONE_TIMER_FIT_WIDTH = 0.76;
+const ZONE_TIMER_FIT_HEIGHT = 0.46;
+const ZONE_TIMER_MIN_PX = 28;
 const ZONE_TIMER_DOT_COLOR = "rgba(12, 10, 8, 0.9)";
 const ZONE_TIMER_HALO_COLOR = "rgba(255, 248, 230, 0.92)";
+const WEATHER_FILTER_CODES = ["clear", "foggy", "storm", "rain"];
 
 /** 5x7 LED digit patterns (1 = lit dot). */
 const LED_DIGIT_PATTERNS = {
@@ -490,12 +492,53 @@ function getSelectedWeathers() {
 }
 
 function getSelectedWeatherLabels() {
-  const labels = [...document.querySelectorAll("#weather-filters input[name='weather']:checked")].map(
-    (input) => input.parentElement?.textContent?.trim() || input.value,
-  );
-  if (labels.length === 0) return L10N.weatherNoneSelected;
-  if (labels.length === 4) return L10N.weatherAllSelected;
-  return labels.join(", ");
+  const checked = [...document.querySelectorAll("#weather-filters input[name='weather']:checked")];
+  if (checked.length === 0) return L10N.weatherNoneSelected;
+  if (checked.length === WEATHER_FILTER_CODES.length) return L10N.weatherAllSelected;
+  return checked
+    .map((input) => {
+      const text = [...(input.parentElement?.childNodes || [])]
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent.trim())
+        .join(" ")
+        .trim();
+      return text || getWeatherIconLabel(input.value);
+    })
+    .join(", ");
+}
+
+function getWeatherPartCheckboxes() {
+  return [...document.querySelectorAll("#weather-filters input[name='weather']")];
+}
+
+function syncWeatherAnyCheckbox() {
+  const anyCb = document.getElementById("weather-any");
+  const parts = getWeatherPartCheckboxes();
+  if (!anyCb || !parts.length) return;
+  anyCb.checked = parts.every((input) => input.checked);
+}
+
+function applyWeatherAnyMaster() {
+  const anyCb = document.getElementById("weather-any");
+  if (!anyCb?.checked) return;
+  getWeatherPartCheckboxes().forEach((input) => {
+    input.checked = true;
+  });
+}
+
+function handleWeatherFilterChange(event) {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.id === "weather-any") {
+    applyWeatherAnyMaster();
+  } else if (target.name === "weather") {
+    if (!target.checked) {
+      const anyCb = document.getElementById("weather-any");
+      if (anyCb) anyCb.checked = false;
+    } else {
+      syncWeatherAnyCheckbox();
+    }
+  }
 }
 
 function hourInWindow(hour, [start, end]) {
@@ -942,8 +985,7 @@ function getZoneRadiusPx(entry) {
 function getZoneTimerDisplaySize(entry) {
   const radiusPx = getZoneRadiusPx(entry);
   if (radiusPx <= 0) return 0;
-  // Target: timer digit height ≈ 70% of circle diameter
-  return Math.round(radiusPx * 2 * ZONE_TIMER_SIZE_RATIO);
+  return Math.round(radiusPx * 2);
 }
 
 function formatZoneTimerMinutes(animal, gameTime = getRdoGameTime()) {
@@ -952,6 +994,80 @@ function formatZoneTimerMinutes(animal, gameTime = getRdoGameTime()) {
   const gameMinutes = getMinutesUntilWindowEnd(animal, gameTime);
   if (gameMinutes == null || gameMinutes <= 0) return null;
   return String(Math.max(1, Math.ceil(gameMinutes / 30)));
+}
+
+function getWeatherIconLabel(weatherCode) {
+  const labels = {
+    clear: APP_LANG === "ru" ? "Ясно" : "Clear",
+    foggy: APP_LANG === "ru" ? "Туман" : "Foggy",
+    rain: APP_LANG === "ru" ? "Дождь" : "Rain",
+    storm: APP_LANG === "ru" ? "Буря" : "Storm",
+    any: APP_LANG === "ru" ? "Любая погода" : "Any weather",
+  };
+  return labels[weatherCode] || weatherCode || "";
+}
+
+function buildWeatherIconSvg(weatherCode, sizePx) {
+  const size = Math.max(12, Math.round(sizePx));
+  const stroke = "#101820";
+  const common = `width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"`;
+  const badge = `<circle cx="32" cy="32" r="30" fill="#fff8e8" stroke="#101820" stroke-width="3"/>`;
+  const code = weatherCode || "any";
+
+  if (code === "clear") {
+    return `<svg class="zone-weather-svg" ${common}>
+      ${badge}
+      <circle cx="32" cy="32" r="11" fill="#ffd000" stroke="${stroke}" stroke-width="2.5"/>
+      <g stroke="#ff9a00" stroke-width="3.5" stroke-linecap="round">
+        <line x1="32" y1="8" x2="32" y2="15"/><line x1="32" y1="49" x2="32" y2="56"/>
+        <line x1="8" y1="32" x2="15" y2="32"/><line x1="49" y1="32" x2="56" y2="32"/>
+        <line x1="14" y1="14" x2="19" y2="19"/><line x1="45" y1="45" x2="50" y2="50"/>
+        <line x1="45" y1="14" x2="50" y2="19"/><line x1="14" y1="45" x2="19" y2="50"/>
+      </g>
+    </svg>`;
+  }
+
+  if (code === "foggy") {
+    return `<svg class="zone-weather-svg" ${common}>
+      ${badge}
+      <ellipse cx="32" cy="26" rx="15" ry="9" fill="#eef4ff" stroke="${stroke}" stroke-width="2.2"/>
+      <ellipse cx="22" cy="30" rx="10" ry="7" fill="#dce7f8" stroke="${stroke}" stroke-width="2"/>
+      <ellipse cx="42" cy="30" rx="11" ry="7" fill="#dce7f8" stroke="${stroke}" stroke-width="2"/>
+      <g stroke="#4a5a78" stroke-width="3.4" stroke-linecap="round">
+        <line x1="12" y1="44" x2="52" y2="44"/><line x1="16" y1="52" x2="48" y2="52"/>
+      </g>
+    </svg>`;
+  }
+
+  if (code === "rain") {
+    return `<svg class="zone-weather-svg" ${common}>
+      ${badge}
+      <ellipse cx="32" cy="23" rx="15" ry="9" fill="#5aa0ff" stroke="${stroke}" stroke-width="2.2"/>
+      <ellipse cx="22" cy="27" rx="10" ry="7" fill="#7ab4ff" stroke="${stroke}" stroke-width="2"/>
+      <ellipse cx="42" cy="27" rx="11" ry="7" fill="#7ab4ff" stroke="${stroke}" stroke-width="2"/>
+      <g stroke="#0050c8" stroke-width="3.6" stroke-linecap="round">
+        <line x1="20" y1="40" x2="16" y2="54"/><line x1="32" y1="38" x2="28" y2="56"/><line x1="44" y1="40" x2="40" y2="54"/>
+      </g>
+    </svg>`;
+  }
+
+  if (code === "storm") {
+    return `<svg class="zone-weather-svg" ${common}>
+      ${badge}
+      <ellipse cx="32" cy="21" rx="15" ry="9" fill="#4a5568" stroke="${stroke}" stroke-width="2.2"/>
+      <ellipse cx="22" cy="25" rx="10" ry="7" fill="#5c6780" stroke="${stroke}" stroke-width="2"/>
+      <ellipse cx="42" cy="25" rx="11" ry="7" fill="#5c6780" stroke="${stroke}" stroke-width="2"/>
+      <path d="M34 32 L25 46 L32 46 L27 58 L46 38 L36 38 L40 32 Z" fill="#ffe14a" stroke="${stroke}" stroke-width="2.2" stroke-linejoin="round"/>
+    </svg>`;
+  }
+
+  // any weather — bright green exclamation on badge
+  return `<svg class="zone-weather-svg" ${common}>
+    ${badge}
+    <text x="32" y="50" text-anchor="middle" font-size="48" font-weight="900"
+      font-family="Arial Black, Arial, sans-serif" fill="#00c853"
+      stroke="#003d18" stroke-width="2.5" paint-order="stroke fill">!</text>
+  </svg>`;
 }
 
 function buildLedDigitSvg(digit, x, y, cell, gap, fillColor, haloColor) {
@@ -1009,8 +1125,8 @@ function buildLedTimerSvg(text, widthPx, heightPx) {
   return `<svg class="zone-timer-svg" width="${widthPx}" height="${heightPx}" viewBox="0 0 ${widthPx} ${heightPx}" aria-hidden="true">${parts.join("")}</svg>`;
 }
 
-function buildZoneTimerIcon(text, sizePx) {
-  if (!text || sizePx < ZONE_TIMER_MIN_PX) {
+function buildZoneTimerIcon(text, diameterPx, weatherCode = null) {
+  if (!text || diameterPx < ZONE_TIMER_MIN_PX) {
     return L.divIcon({
       className: "zone-timer-marker is-empty",
       html: "",
@@ -1019,17 +1135,53 @@ function buildZoneTimerIcon(text, sizePx) {
     });
   }
 
-  // sizePx = desired digit-block height (~70% of zone diameter)
-  const height = sizePx;
   const digitCount = String(text).replace(/\D/g, "").length || 1;
-  const width = Math.max(sizePx, Math.round(height * (0.2 + digitCount * 0.78)));
-  const svg = buildLedTimerSvg(text, width, height);
+  const maxW = diameterPx * ZONE_TIMER_FIT_WIDTH;
+  const maxH = diameterPx * ZONE_TIMER_FIT_HEIGHT;
+  // Icon is larger; digits slightly tighter so the pair still fits inside the circle
+  const widthFactor = 0.68 + 0.05 + (0.12 + digitCount * 0.52);
+  let height = Math.min(maxH, maxW / widthFactor);
+  height = Math.max(18, height);
+
+  let iconSize = Math.round(height * 0.72);
+  let gap = Math.max(2, Math.round(height * 0.05));
+  let digitsWidth = Math.max(
+    Math.round(height * (0.12 + digitCount * 0.52)),
+    Math.round(height * 0.4),
+  );
+  let width = iconSize + gap + digitsWidth;
+
+  if (width > maxW) {
+    const scale = maxW / width;
+    height = Math.max(16, height * scale);
+    iconSize = Math.max(14, Math.round(iconSize * scale));
+    gap = Math.max(2, Math.round(gap * scale));
+    digitsWidth = Math.max(12, Math.round(digitsWidth * scale));
+    width = iconSize + gap + digitsWidth;
+  }
+
+  // Hard cap: never exceed ~78% of diameter (already in maxW/maxH)
+  iconSize = Math.min(iconSize, Math.round(diameterPx * 0.34));
+  width = iconSize + gap + digitsWidth;
+  if (width > maxW) {
+    digitsWidth = Math.max(12, Math.round(maxW - iconSize - gap));
+    width = iconSize + gap + digitsWidth;
+  }
+
+  const boxW = Math.round(width);
+  const boxH = Math.round(height);
+  const svg = buildLedTimerSvg(text, digitsWidth, boxH);
+  const weatherSvg = buildWeatherIconSvg(weatherCode, iconSize);
+  const weatherTitle = getWeatherIconLabel(weatherCode);
 
   return L.divIcon({
     className: "zone-timer-marker",
-    html: `<div class="zone-timer" style="width:${width}px;height:${height}px">${svg}</div>`,
-    iconSize: [width, height],
-    iconAnchor: [width / 2, height / 2],
+    html: `<div class="zone-timer" style="width:${boxW}px;height:${boxH}px" title="${weatherTitle}">
+      <span class="zone-weather-icon" aria-label="${weatherTitle}">${weatherSvg}</span>
+      <span class="zone-timer-digits">${svg}</span>
+    </div>`,
+    iconSize: [boxW, boxH],
+    iconAnchor: [Math.round(boxW / 2), Math.round(boxH / 2)],
   });
 }
 
@@ -1046,7 +1198,9 @@ function updateZoneTimerMarker(entry, gameTime = getRdoGameTime()) {
   if (!entry?.timerMarker || !entry.animal) return;
   const text = formatZoneTimerMinutes(entry.animal, gameTime);
   const sizePx = getZoneTimerDisplaySize(entry);
-  entry.timerMarker.setIcon(buildZoneTimerIcon(text, sizePx));
+  entry.timerMarker.setIcon(
+    buildZoneTimerIcon(text, sizePx, entry.animal.weather_code || WEATHER_ANY),
+  );
 }
 
 function updateAllZoneTimers(gameTime = getRdoGameTime()) {
@@ -1597,7 +1751,35 @@ function initTablePanelToggle() {
   window.addEventListener("load", syncTableTogglePosition);
 }
 
+function initWeatherFilters() {
+  const container = document.getElementById("weather-filters");
+  if (!container) return;
+
+  const anyLabel = getWeatherIconLabel("any");
+  const partHtml = WEATHER_FILTER_CODES.map((code) => {
+    const label = getWeatherIconLabel(code);
+    return `<label class="weather-filter-option">
+      <input type="checkbox" name="weather" value="${code}" checked>
+      <span class="weather-filter-icon">${buildWeatherIconSvg(code, 16)}</span>
+      <span class="weather-filter-text">${label}</span>
+    </label>`;
+  }).join("");
+
+  container.innerHTML = `
+    <label class="weather-filter-option weather-filter-any">
+      <input type="checkbox" id="weather-any" checked>
+      <span class="weather-filter-icon">${buildWeatherIconSvg("any", 16)}</span>
+      <span class="weather-filter-text">${anyLabel}</span>
+    </label>
+    ${partHtml}
+  `;
+
+  container.addEventListener("change", handleWeatherFilterChange);
+}
+
 function initFilters() {
+  initWeatherFilters();
+
   const categories = [...new Set(animals.map((animal) => animal.category))];
   document.getElementById("category-filters").innerHTML = categories
     .map(
