@@ -149,12 +149,28 @@ const ZONE_SELECTED_WEIGHT = 4;
 const RDO_ICON_BASE =
   "https://jeanropke.github.io/RDOMap/assets/images/icons/game/animals/legendaries";
 const RDO_ASSETS_BASE = "https://jeanropke.github.io/RDOMap/assets/images/icons";
-const APP_VERSION = "34";
+const APP_VERSION = "35";
 const TABLE_COLLAPSED_KEY = "legendary-map-table-collapsed";
 const MAP_ZOOM_BASE = 3;
 const SPAWN_ICON_SIZE = 18;
 const SPAWN_POINT_COLOR = "#ff2d2d";
 const FAST_TRAVEL_ICON_SIZE = 34;
+const ZONE_TIMER_SIZE_RATIO = 0.7;
+const ZONE_TIMER_MIN_PX = 28;
+
+/** 5x7 LED digit patterns (1 = lit dot). */
+const LED_DIGIT_PATTERNS = {
+  "0": ["01110", "10001", "10001", "10001", "10001", "10001", "01110"],
+  "1": ["00100", "01100", "00100", "00100", "00100", "00100", "01110"],
+  "2": ["01110", "10001", "00001", "00110", "01000", "10000", "11111"],
+  "3": ["01110", "10001", "00001", "00110", "00001", "10001", "01110"],
+  "4": ["00010", "00110", "01010", "10010", "11111", "00010", "00010"],
+  "5": ["11111", "10000", "11110", "00001", "00001", "10001", "01110"],
+  "6": ["00110", "01000", "10000", "11110", "10001", "10001", "01110"],
+  "7": ["11111", "00001", "00010", "00100", "01000", "01000", "01000"],
+  "8": ["01110", "10001", "10001", "01110", "10001", "10001", "01110"],
+  "9": ["01110", "10001", "10001", "01111", "00001", "00010", "01100"],
+};
 
 let map;
 let layerGroup;
@@ -897,6 +913,123 @@ function getSpawnIconSize(zoom = getMapZoom()) {
   return Math.round(Math.min(34, Math.max(8, SPAWN_ICON_SIZE * scale)));
 }
 
+function getZoneRadiusPx(entry) {
+  if (entry?.zone?._radius > 0) return entry.zone._radius;
+  if (!map || !entry?.animal) return 0;
+  const animal = entry.animal;
+  const center = map.latLngToLayerPoint([animal.x, animal.y]);
+  const edge = map.latLngToLayerPoint([animal.x + animal.radius, animal.y]);
+  return Math.max(0, Math.hypot(edge.x - center.x, edge.y - center.y));
+}
+
+function getZoneTimerDisplaySize(entry) {
+  const radiusPx = getZoneRadiusPx(entry);
+  if (radiusPx <= 0) return 0;
+  return Math.round(radiusPx * 2 * ZONE_TIMER_SIZE_RATIO);
+}
+
+function formatZoneTimerMinutes(animal, gameTime = getRdoGameTime()) {
+  const hour = gameTime.getUTCHours();
+  if (!matchesTime(animal, hour)) return null;
+  const gameMinutes = getMinutesUntilWindowEnd(animal, gameTime);
+  if (gameMinutes == null || gameMinutes <= 0) return null;
+  return String(Math.max(1, Math.ceil(gameMinutes / 30)));
+}
+
+function buildLedDigitSvg(digit, x, y, cell, gap, color) {
+  const pattern = LED_DIGIT_PATTERNS[digit];
+  if (!pattern) return "";
+  const dots = [];
+  const step = cell + gap;
+  const r = Math.max(0.35, cell * 0.42);
+  for (let row = 0; row < pattern.length; row += 1) {
+    const line = pattern[row];
+    for (let col = 0; col < line.length; col += 1) {
+      if (line[col] !== "1") continue;
+      const cx = x + col * step + cell / 2;
+      const cy = y + row * step + cell / 2;
+      dots.push(`<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" fill="${color}"/>`);
+    }
+  }
+  return dots.join("");
+}
+
+function buildLedTimerSvg(text, widthPx, heightPx) {
+  const digits = String(text).split("").filter((ch) => LED_DIGIT_PATTERNS[ch]);
+  if (!digits.length || widthPx < 8 || heightPx < 8) return "";
+
+  const colsPerDigit = 5;
+  const rows = 7;
+  const digitGaps = Math.max(0, digits.length - 1);
+  const gapRatio = 0.22;
+  const cellByWidth = widthPx / (digits.length * colsPerDigit + digitGaps * 1.35 + digits.length * colsPerDigit * gapRatio);
+  const cellByHeight = heightPx / (rows + (rows - 1) * gapRatio);
+  const cell = Math.max(0.6, Math.min(cellByWidth, cellByHeight));
+  const gap = cell * gapRatio;
+  const step = cell + gap;
+  const digitGap = step * 1.15;
+  const digitWidth = colsPerDigit * step - gap;
+  const totalWidth = digits.length * digitWidth + digitGaps * digitGap;
+  const totalHeight = rows * step - gap;
+  const offsetX = Math.max(0, (widthPx - totalWidth) / 2);
+  const offsetY = Math.max(0, (heightPx - totalHeight) / 2);
+  const color = "rgba(236, 245, 255, 0.78)";
+
+  let x = offsetX;
+  const parts = [];
+  for (const digit of digits) {
+    parts.push(buildLedDigitSvg(digit, x, offsetY, cell, gap, color));
+    x += digitWidth + digitGap;
+  }
+
+  return `<svg class="zone-timer-svg" width="${widthPx}" height="${heightPx}" viewBox="0 0 ${widthPx} ${heightPx}" aria-hidden="true">${parts.join("")}</svg>`;
+}
+
+function buildZoneTimerIcon(text, sizePx) {
+  if (!text || sizePx < ZONE_TIMER_MIN_PX) {
+    return L.divIcon({
+      className: "zone-timer-marker is-empty",
+      html: "",
+      iconSize: [1, 1],
+      iconAnchor: [0, 0],
+    });
+  }
+
+  const width = sizePx;
+  const height = Math.max(Math.round(sizePx * 0.42), Math.round(ZONE_TIMER_MIN_PX * 0.42));
+  const svg = buildLedTimerSvg(text, width, height);
+
+  return L.divIcon({
+    className: "zone-timer-marker",
+    html: `<div class="zone-timer" style="width:${width}px;height:${height}px">${svg}</div>`,
+    iconSize: [width, height],
+    iconAnchor: [width / 2, height / 2],
+  });
+}
+
+function createZoneTimerMarker(animal) {
+  return L.marker([animal.x, animal.y], {
+    icon: buildZoneTimerIcon(null, 0),
+    pane: "animalTimers",
+    interactive: false,
+    keyboard: false,
+  });
+}
+
+function updateZoneTimerMarker(entry, gameTime = getRdoGameTime()) {
+  if (!entry?.timerMarker || !entry.animal) return;
+  const text = formatZoneTimerMinutes(entry.animal, gameTime);
+  const sizePx = getZoneTimerDisplaySize(entry);
+  entry.timerMarker.setIcon(buildZoneTimerIcon(text, sizePx));
+}
+
+function updateAllZoneTimers(gameTime = getRdoGameTime()) {
+  if (!map) return;
+  for (const entry of animalLayers.values()) {
+    updateZoneTimerMarker(entry, gameTime);
+  }
+}
+
 function getAnimalIconUrl(animal) {
   return `${RDO_ICON_BASE}/${animal.id}.svg`;
 }
@@ -930,6 +1063,7 @@ function createSpawnMarker(animal, point, status) {
 function updateMapMarkerIcons() {
   if (!map) return;
   const spawnSize = getSpawnIconSize();
+  const gameTime = getRdoGameTime();
 
   for (const entry of animalLayers.values()) {
     if (!entry.animal) continue;
@@ -940,6 +1074,7 @@ function updateMapMarkerIcons() {
     for (const pointMarker of entry.points) {
       pointMarker.setIcon(buildSpawnDivIcon(entry.animal, spawnSize, dimmed));
     }
+    updateZoneTimerMarker(entry, gameTime);
   }
 }
 
@@ -956,6 +1091,9 @@ function createAnimalLayers(animal) {
   });
   group.addLayer(zone);
 
+  const timerMarker = createZoneTimerMarker(animal);
+  group.addLayer(timerMarker);
+
   const centerMarker = createCenterOverlay(animal, status);
   group.addLayer(centerMarker);
 
@@ -967,7 +1105,7 @@ function createAnimalLayers(animal) {
     points.push(pointMarker);
   }
 
-  const entry = { group, zone, centerMarker, points, animal };
+  const entry = { group, zone, timerMarker, centerMarker, points, animal };
   setLayerStyle(entry, status);
   return entry;
 }
@@ -1298,6 +1436,7 @@ function renderMarkers() {
   syncMapLayersFromFilters();
   updateStats();
   updateAllTableRows();
+  window.requestAnimationFrame(() => updateAllZoneTimers());
 }
 
 function updateStats() {
@@ -1381,6 +1520,7 @@ function updateClock() {
   syncCategoryRowVisibility();
   syncPopupTimeRemaining();
   syncMapSelectionHighlight();
+  updateAllZoneTimers();
 }
 
 function syncTableTogglePosition() {
@@ -1470,6 +1610,8 @@ function initAnimalMapPanes() {
   fastTravelPane.style.zIndex = 380;
   const zonesPane = map.createPane("animalZones");
   zonesPane.style.zIndex = 400;
+  const timersPane = map.createPane("animalTimers");
+  timersPane.style.zIndex = 450;
   const spawnsPane = map.createPane("animalSpawns");
   spawnsPane.style.zIndex = 550;
   const centersPane = map.createPane("animalCenters");
@@ -1548,9 +1690,11 @@ function initMap() {
   map.on("zoom", updateMapMarkerIcons);
   map.on("zoomend", () => {
     updateMapMarkerIcons();
+    window.requestAnimationFrame(() => updateAllZoneTimers());
     const layer = getOpenAnimalPopupLayer();
     if (layer) updateOpenAnimalPopup(layer);
   });
+  map.on("moveend", () => window.requestAnimationFrame(() => updateAllZoneTimers()));
   initPopupActionDelegation();
 }
 

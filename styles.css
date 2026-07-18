@@ -682,6 +682,29 @@ body.table-collapsed .table-panel-toggle {
   filter: contrast(1.05) brightness(0.95);
 }
 
+.zone-timer-marker {
+  background: transparent !important;
+  border: 0 !important;
+  pointer-events: none !important;
+}
+
+.zone-timer-marker.is-empty {
+  display: none;
+}
+
+.zone-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.55));
+}
+
+.zone-timer-svg {
+  display: block;
+  overflow: visible;
+}
+
 .animal-spawn-marker {
   background: transparent;
   border: 0;
