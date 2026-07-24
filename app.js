@@ -44,6 +44,9 @@ const I18N = {
     statusBar: "RDO time: {time}, weather: {weather} | map v{version}",
     weatherNoneSelected: "none",
     weatherAllSelected: "any selected",
+    previewTimeOn: "Next time slot",
+    previewTimeOff: "Back to current time",
+    previewTimeHint: "Now {now} · preview from {next}",
     progressFilterIncomplete: "Incomplete",
     progressFilterNoSamples: "Missing samples",
     progressFilterNoPhoto: "Missing photo",
@@ -101,6 +104,9 @@ const I18N = {
     statusBar: "Время RDO: {time}, погода: {weather} | карта v{version}",
     weatherNoneSelected: "не выбрана",
     weatherAllSelected: "любая из выбранных",
+    previewTimeOn: "Следующий отрезок",
+    previewTimeOff: "Вернуться к текущему",
+    previewTimeHint: "Сейчас {now} · просмотр с {next}",
     progressFilterIncomplete: "Незавершённые",
     progressFilterNoSamples: "Без образцов взято",
     progressFilterNoPhoto: "Не сфотографировано",
@@ -149,7 +155,7 @@ const ZONE_SELECTED_WEIGHT = 4;
 const RDO_ICON_BASE =
   "https://jeanropke.github.io/RDOMap/assets/images/icons/game/animals/legendaries";
 const RDO_ASSETS_BASE = "https://jeanropke.github.io/RDOMap/assets/images/icons";
-const APP_VERSION = "39";
+const APP_VERSION = "41";
 const TABLE_COLLAPSED_KEY = "legendary-map-table-collapsed";
 const MAP_ZOOM_BASE = 3;
 const SPAWN_ICON_SIZE = 18;
@@ -184,6 +190,7 @@ let fastTravels = [];
 let filtersInitialized = false;
 let clockTimer = null;
 let openAnimalId = null;
+let previewNextSegment = false;
 
 const animalLayers = new Map();
 const progressState = loadProgressState();
@@ -405,6 +412,44 @@ function getRdoGameTime(now = new Date()) {
   return new Date(now.getTime() * 30);
 }
 
+function getTimeBoundaries() {
+  const hours = new Set();
+  for (const animal of animals) {
+    for (const [start, end] of animal.time_windows || []) {
+      if (start === end) continue;
+      hours.add(start);
+    }
+  }
+  return [...hours].sort((a, b) => a - b);
+}
+
+function getNextTimeBoundaryHour(gameTime = getRdoGameTime()) {
+  const boundaries = getTimeBoundaries();
+  if (!boundaries.length) return (gameTime.getUTCHours() + 1) % 24;
+  const currentHour = gameTime.getUTCHours();
+  for (const hour of boundaries) {
+    if (hour > currentHour) return hour;
+  }
+  return boundaries[0];
+}
+
+function getEffectiveGameTime(now = new Date()) {
+  const real = getRdoGameTime(now);
+  if (!previewNextSegment) return real;
+  const nextHour = getNextTimeBoundaryHour(real);
+  return new Date(
+    Date.UTC(
+      real.getUTCFullYear(),
+      real.getUTCMonth(),
+      real.getUTCDate(),
+      nextHour,
+      0,
+      0,
+      0,
+    ),
+  );
+}
+
 function formatGameClock(gameTime) {
   const hours = String(gameTime.getUTCHours()).padStart(2, "0");
   const minutes = String(gameTime.getUTCMinutes()).padStart(2, "0");
@@ -438,7 +483,7 @@ function getActiveTimeWindow(animal, hour) {
   return animal.time_windows?.find((window) => hourInWindow(hour, window)) ?? null;
 }
 
-function getMinutesUntilWindowEnd(animal, gameTime = getRdoGameTime()) {
+function getMinutesUntilWindowEnd(animal, gameTime = getEffectiveGameTime()) {
   const hour = gameTime.getUTCHours();
   const window = getActiveTimeWindow(animal, hour);
   if (!window) return null;
@@ -470,11 +515,11 @@ function formatRealTimeRemaining(gameMinutesRemaining) {
   return `${minutes}${L10N.minsShort}`;
 }
 
-function formatRemainingUntilDisappearance(animal, gameTime = getRdoGameTime()) {
+function formatRemainingUntilDisappearance(animal, gameTime = getEffectiveGameTime()) {
   return formatRealTimeRemaining(getMinutesUntilWindowEnd(animal, gameTime));
 }
 
-function buildTimeRemainingLine(status, animal, gameTime = getRdoGameTime()) {
+function buildTimeRemainingLine(status, animal, gameTime = getEffectiveGameTime()) {
   if (status !== "available") return "";
   const remaining = formatRemainingUntilDisappearance(animal, gameTime);
   if (!remaining) return "";
@@ -482,7 +527,7 @@ function buildTimeRemainingLine(status, animal, gameTime = getRdoGameTime()) {
 }
 
 function getCurrentGameHour() {
-  return getRdoGameTime().getUTCHours();
+  return getEffectiveGameTime().getUTCHours();
 }
 
 function getSelectedWeathers() {
@@ -988,7 +1033,7 @@ function getZoneTimerDisplaySize(entry) {
   return Math.round(radiusPx * 2);
 }
 
-function formatZoneTimerMinutes(animal, gameTime = getRdoGameTime()) {
+function formatZoneTimerMinutes(animal, gameTime = getEffectiveGameTime()) {
   const hour = gameTime.getUTCHours();
   if (!matchesTime(animal, hour)) return null;
   const gameMinutes = getMinutesUntilWindowEnd(animal, gameTime);
@@ -1194,7 +1239,7 @@ function createZoneTimerMarker(animal) {
   });
 }
 
-function updateZoneTimerMarker(entry, gameTime = getRdoGameTime()) {
+function updateZoneTimerMarker(entry, gameTime = getEffectiveGameTime()) {
   if (!entry?.timerMarker || !entry.animal) return;
   const text = formatZoneTimerMinutes(entry.animal, gameTime);
   const sizePx = getZoneTimerDisplaySize(entry);
@@ -1203,7 +1248,7 @@ function updateZoneTimerMarker(entry, gameTime = getRdoGameTime()) {
   );
 }
 
-function updateAllZoneTimers(gameTime = getRdoGameTime()) {
+function updateAllZoneTimers(gameTime = getEffectiveGameTime()) {
   if (!map) return;
   for (const entry of animalLayers.values()) {
     updateZoneTimerMarker(entry, gameTime);
@@ -1243,7 +1288,7 @@ function createSpawnMarker(animal, point, status) {
 function updateMapMarkerIcons() {
   if (!map) return;
   const spawnSize = getSpawnIconSize();
-  const gameTime = getRdoGameTime();
+  const gameTime = getEffectiveGameTime();
 
   for (const entry of animalLayers.values()) {
     if (!entry.animal) continue;
@@ -1619,10 +1664,41 @@ function renderMarkers() {
   window.requestAnimationFrame(() => updateAllZoneTimers());
 }
 
+function syncPreviewTimeButton() {
+  const btn = document.getElementById("preview-next-segment");
+  const hint = document.getElementById("preview-time-hint");
+  const clock = document.getElementById("game-clock");
+  if (!btn) return;
+
+  const real = getRdoGameTime();
+  if (previewNextSegment) {
+    const nextHour = getNextTimeBoundaryHour(real);
+    btn.classList.add("is-active");
+    btn.setAttribute("aria-pressed", "true");
+    btn.textContent = L10N.previewTimeOff;
+    if (clock) clock.classList.add("is-preview");
+    if (hint) {
+      hint.hidden = false;
+      hint.textContent = L10N.previewTimeHint
+        .replace("{now}", formatGameClock(real))
+        .replace("{next}", formatGameHour(nextHour));
+    }
+  } else {
+    btn.classList.remove("is-active");
+    btn.setAttribute("aria-pressed", "false");
+    btn.textContent = L10N.previewTimeOn;
+    if (clock) clock.classList.remove("is-preview");
+    if (hint) {
+      hint.hidden = true;
+      hint.textContent = "";
+    }
+  }
+}
+
 function updateStats() {
   const filters = getFilters();
   const visible = animals.filter((animal) => animalPassesFilters(animal, filters)).length;
-  const gameTime = getRdoGameTime();
+  const gameTime = getEffectiveGameTime();
   document.getElementById("stats-text").textContent = L10N.statsText
     .replace("{map}", animals.filter((a) => a.on_map).length)
     .replace("{table}", animals.length);
@@ -1631,6 +1707,7 @@ function updateStats() {
     .replace("{time}", formatGameClock(gameTime))
     .replace("{weather}", getSelectedWeatherLabels())
     .replace("{version}", APP_VERSION);
+  syncPreviewTimeButton();
 }
 
 function updateTableRowStatus(animalId) {
@@ -1802,7 +1879,7 @@ function initFilters() {
   `;
 
   document.querySelectorAll(".sidebar input, .sidebar select, .sidebar button").forEach((node) => {
-    if (node.id === "reset-progress") return;
+    if (node.id === "reset-progress" || node.id === "preview-next-segment") return;
     node.addEventListener("change", () => {
       renderMarkers();
       if (node.id === "show-fast-travel") {
@@ -1811,6 +1888,17 @@ function initFilters() {
     });
     node.addEventListener("click", renderMarkers);
   });
+
+  const previewBtn = document.getElementById("preview-next-segment");
+  if (previewBtn && previewBtn.dataset.ready !== "true") {
+    previewBtn.dataset.ready = "true";
+    previewBtn.addEventListener("click", () => {
+      previewNextSegment = !previewNextSegment;
+      syncPreviewTimeButton();
+      renderMarkers();
+    });
+    syncPreviewTimeButton();
+  }
 }
 
 function initAnimalMapPanes() {

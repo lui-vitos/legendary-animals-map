@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Карта легендарных животных</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=46">
+  <link rel="stylesheet" href="styles.css?v=47">
   <link rel="stylesheet" href="fme.css?v=6">
   <script src="site-config.js?v=1"></script>
   <script src="metrika.js?v=1"></script>
@@ -23,6 +23,10 @@
       <div class="clock-box">
         <span class="clock-label">Время</span>
         <strong id="game-clock">--:--</strong>
+        <button type="button" id="preview-next-segment" class="preview-time-btn" aria-pressed="false">
+          Следующий отрезок
+        </button>
+        <p id="preview-time-hint" class="preview-time-hint" hidden></p>
       </div>
       <div class="filter-block">
         <span class="filter-block-title">Погода (можно несколько)</span>
@@ -198,6 +202,6 @@
   <script src="bundled-data.js?v=1"></script>
   <script src="fme-data.js?v=2"></script>
   <script src="fme.js?v=7"></script>
-  <script src="app.js?v=46"></script>
+  <script src="app.js?v=48"></script>
 </body>
 </html>
